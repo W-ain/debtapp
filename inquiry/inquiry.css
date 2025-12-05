@@ -1,0 +1,174 @@
+/* グローバルスタイルとリセット */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f7f9fc;
+    padding: 20px;
+    margin: 0;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* アイコンのサイズ調整 */
+.material-icons.icon-xs { font-size: 16px; margin-right: 4px; vertical-align: middle; }
+.material-icons.icon-sm { font-size: 18px; margin-right: 6px; vertical-align: middle; }
+
+/* 1. ヘッダーカード */
+.header-card {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+.header-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #333;
+}
+.header-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* 2. 借金カードの基本スタイル */
+.debt-card {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid #eee; 
+}
+
+/* カード上部 (名前と金額) */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.debtor-info strong {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.email-address {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+.amount-info {
+    text-align: right;
+}
+.current-amount {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #4285f4; 
+    display: block;
+}
+.original-amount {
+    font-size: 0.8rem;
+    color: #aaa;
+    text-decoration: line-through;
+    display: block;
+    margin-top: 2px;
+}
+
+/* カード中央部 (期日とボタン) */
+.due-date-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 12px;
+    gap: 8px; 
+}
+
+/* レシート/音声タグ */
+.icon-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.tag-receipt {
+    background-color: #e6ffe6; 
+    color: #3c9c3c;
+    margin-left: auto; 
+}
+.tag-voice {
+    background-color: #e6f7ff; 
+    color: #4285f4;
+    margin-left: auto; 
+}
+
+/* 一部返済済みステータス */
+.status-partial {
+    display: flex;
+    align-items: center;
+    background-color: #fffde6; 
+    color: #a08000;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+/* ボタン */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+/* 返済を記録ボタン */
+.btn-primary {
+    background-color: #e5ecff; 
+    color: #4285f4; 
+    margin-bottom: 10px;
+}
+
+
+/* クイックアクションボタンのスタイル */
+.section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+.btn.new-loan { background: linear-gradient(135deg, #5b7cff, #6af1ff); }
+.btn.view-list { background: linear-gradient(135deg, #4c5fff, #8dd8ff); }
+.btn-group .btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+}
