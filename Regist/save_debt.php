@@ -240,7 +240,9 @@ try {
     </ul>
     {$image_html} 
     <p style=\"margin-top: 20px;\">上記の内容をご確認の上、以下のリンクから認証をお願いします。</p>
-    <p><a href='http://localhost/debtapp/verify_email.php?token={$token}'>貸付を確認する</a></p>
+    // <p><a href='http://localhost/debtapp/verify_email.php?token={$token}'>貸付を確認する</a></p>
+    <p><a href='https://debtapp-565547399529.asia-northeast1.run.app
+/verify_email.php?token={$token}'>貸付を確認する</a></p>
     <hr>
     <small>このメールに心当たりがない場合は無視してください。</small>
     ";
@@ -262,4 +264,5 @@ echo "window.location.href = " . json_encode($redirect_url) . ";";
 echo "</script>";
 echo "</body></html>";
 exit;
+
 ?>
