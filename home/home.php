@@ -9,7 +9,7 @@ require_once '../config.php';
 $user_id = $_SESSION['user_id'] ?? null;
 if (!$user_id) {
   // ログインしていない場合はログイン画面へ（ルートパス指定）
-  header("Location: /debtapp/login/login.php");
+  header("Location: /login/login.php");
   exit;
 }
 
@@ -183,5 +183,6 @@ try {
   </script>
 
 </body>
+
 
 </html>
