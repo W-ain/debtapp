@@ -53,7 +53,7 @@ try {
 $client = new Client();
 $client->setClientId('887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('http://localhost/debtapp/google_callback2.php'); 
+$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
 $client->addScope('email');
 $client->addScope('profile');
 
@@ -173,4 +173,5 @@ h2 {
     <a href="<?= htmlspecialchars($authUrl) ?>" class="button">Googleで認証する</a>
 </div>
 </body>
+
 </html>
