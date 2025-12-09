@@ -31,10 +31,10 @@ error_reporting(E_ALL);
 // ================================
 // 🗄️ データベース接続設定（本番環境）
 // ================================
-$host = "/cloudsql/PROJECT:REGION:INSTANCE/cloudsql/moonlit-academy-477401-t5:us-central1:myapp-sql";
-$dbname = "mydb";   // ← 現在のDB名
-$dbuser = "general_user";   // XAMPP/MAMP のデフォルトユーザー
-$dbpass = "general_password";       // パスワードなし（デフォルト）
+$host = "/cloudsql/moonlit-academy-477401-t5:us-central1:myapp-sql";
+$dbname = "mydb";   // DB名
+$dbuser = "dev_user";   // CloudSQL上のユーザー
+$dbpass = "nv1a_NV1A";  
 
 try {
     $pdo = new PDO(
@@ -57,7 +57,8 @@ define('DB_HOST', $host);
 define('DB_NAME', $dbname);
 define('DB_USER', $dbuser);
 define('DB_PASS', $dbpass);
-define('DSN', "mysql:host={$host};dbname={$dbname};charset=utf8mb4");
+// define('DSN', "mysql:host={$host};dbname={$dbname};charset=utf8mb4");
+define('DSN', "mysql:unix_socket={$host};dbname={$dbname};charset=utf8mb4");
 
 // ================================
 // ✉️ メール設定（PHPMailer 用）
@@ -83,3 +84,4 @@ $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
 
 ?>
+
