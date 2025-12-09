@@ -12,7 +12,8 @@ $token_data = [
     'code' => $_GET['code'],
     'client_id' => '887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com',
     'client_secret' => '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',
-    'redirect_uri' => 'http://localhost/debtapp/login/google_callback.php',
+    // 'redirect_uri' => 'http://localhost/debtapp/login/google_callback.php',
+    'redirect_uri' => 'https://debtapp-565547399529.asia-northeast1.run.app/login/google_callback.php',
     'grant_type' => 'authorization_code'
 ];
 
@@ -64,4 +65,5 @@ $_SESSION['name']    = $name;
 
 // ✅ ホーム画面へリダイレクト (変更なし)
 header("Location: /debtapp/home/home.php");
+
 exit;
