@@ -8,7 +8,7 @@ $user_id = $_SESSION['user_id'] ?? null;
 $user_email = $_SESSION['email'] ?? null;
 
 if (!$user_id) {
-    header("Location: /debtapp/login/google_login.php");
+    header("Location: /login/google_login.php");
     exit;
 }
 
@@ -391,5 +391,6 @@ try {
         });
     </script>
 </body>
+
 
 </html>
