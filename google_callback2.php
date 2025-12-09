@@ -10,7 +10,7 @@ use Google\Service\Oauth2;
 $client = new Client();
 $client->setClientId('887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('http://localhost/debtapp/google_callback2.php'); 
+$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
 
 $url_has_token = isset($_GET['token']);
 $url_has_code = isset($_GET['code']);
@@ -32,7 +32,7 @@ if ($url_has_code) {
     $_SESSION['google_auth_code'] = $_GET['code'];
     
     // クリーンなURL（クエリなし）にリダイレクトし、ブラウザのURLからcodeを削除
-    header('Location: http://localhost/debtapp/google_callback2.php');
+    header('Location: https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php');
     exit;
 }
 
@@ -255,4 +255,5 @@ if ($proof_image_path_db) {
     </form>
 </div>
 </body>
+
 </html>
