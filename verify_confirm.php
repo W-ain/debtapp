@@ -14,64 +14,13 @@ $debt = null;
 $lender_email_sent = false;
 $borrower_email_sent = false;
 
-// ----------------------------------------------------------------------
-// 1. セッションから認証情報を取得し、クリア
-// ----------------------------------------------------------------------
-$verified_user = $_SESSION['verified_user'] ?? null;
-// 認証後、セッションをクリアする（二重送信防止のため）
-unset($_SESSION['verified_user']);
-
-if (!$token || !$email || !$verified_user || $email !== $verified_user['email']) {
-    $error_message = '不正なアクセス、または認証情報が無効です。';
+if (!$token || !$email) {
+    $error_message = '不正なアクセスです。トークンまたはメールアドレスが指定されていません。';
 }
 
 if (!$error_message) {
     try {
-        // ==========================================================
-        // 🚨 トランザクション開始
-        // ==========================================================
-        $pdo->beginTransaction();
-
-        // ----------------------------------------------------
-        // A. usersテーブルへの保存または更新（承認者＝債務者を登録）
-        // ----------------------------------------------------
-        $google_id = $verified_user['google_id'];
-        $name = $verified_user['name'];
-        $email = $verified_user['email']; // メールアドレスを再取得
-        $user_id_for_session = null;
-
-        // 既存ユーザーかチェック
-        // 【修正確認済み】カラム名を email に修正
-        $stmt = $pdo->prepare("SELECT user_id FROM users WHERE google_id = ? OR email = ?");
-        $stmt->execute([$google_id, $email]);
-        $existing_user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($existing_user) {
-            // 既存ユーザー: Google IDと名前を更新
-            // ※ updated_at は前回修正でテーブルに追加された前提
-            $update_sql = "UPDATE users SET user_name = ?, google_id = ?, updated_at = NOW() WHERE user_id = ?";
-            $stmt = $pdo->prepare($update_sql);
-            $stmt->execute([$name, $google_id, $existing_user['user_id']]);
-            $user_id_for_session = $existing_user['user_id'];
-        } else {
-            // 新規ユーザー: ユーザーとして登録
-            // 【最重要修正点】password_hash (NOT NULL) と is_verified (NOT NULL) に値を設定
-            $insert_sql = "
-        INSERT INTO users (user_name, email, google_id, created_at, updated_at, password_hash, is_verified) 
-        VALUES (?, ?, ?, NOW(), NOW(), ?, ?)
-    ";
-            $stmt = $pdo->prepare($insert_sql);
-
-            // Google認証ユーザーとして登録
-            // 1. password_hash: 空文字列 '' 
-            // 2. is_verified: 1 (Google認証で確認済みのため)
-            $stmt->execute([$name, $email, $google_id, '', 1]);
-            $user_id_for_session = $pdo->lastInsertId();
-        }
-        // ----------------------------------------------------
-        // B. 貸付情報を取得（貸主情報もJOIN）
-        // ----------------------------------------------------
-        // 【修正】u.email を u.user_email に修正 (usersテーブルのカラム名に依存)
+        // 貸付情報を取得（貸主情報もJOIN）
         $stmt = $pdo->prepare("
             SELECT 
                 d.*, 
@@ -86,42 +35,18 @@ if (!$error_message) {
 
         if (!$debt) {
             $error_message = "該当する貸付情報が見つかりません。";
-            $pdo->rollBack(); // DB操作前に失敗が確定したらロールバック
         }
 
         if (!$error_message) {
-            // ----------------------------------------------------
-            // C. 承認状態を更新
-            // ----------------------------------------------------
-            // 【修正】debtor_emailとstatusの更新を追加
-            $update = $pdo->prepare("
-                UPDATE debts 
-                SET verified = 1, 
-                    status = 'active', 
-                    token = NULL,
-                    debtor_email = ? 
-                WHERE token = ?
-            ");
-            $update->execute([$email, $token]);
+            // 承認状態を更新
+            $update = $pdo->prepare("UPDATE debts SET verified = 1, token = NULL WHERE token = ?");
+            $update->execute([$token]);
 
-            // ----------------------------------------------------
-            // 🚨 トランザクション確定
-            // ----------------------------------------------------
-            $pdo->commit();
             $success_message = "承認が完了しました！";
 
-            // ----------------------------------------------------
-            // 【新規追加】承認したユーザー（債務者）としてセッションを確立
-            // ----------------------------------------------------
-            $_SESSION['user_id'] = $user_id_for_session;
-            $_SESSION['user_email'] = $email;
-            $_SESSION['role'] = 'debtor'; // 役割を定義
-
-            // ----------------------------------------------------
-            // D. メール通知処理
-            // ----------------------------------------------------
-
-            // ✅ 借主（あなた）に承認完了メールを送信
+            // ----------------------------------------------------------------------
+            // ✅ 借主（あなた）に承認完了メールを送信 (新規追加)
+            // ----------------------------------------------------------------------
             $mail_borrower = new PHPMailer(true);
             try {
                 // Gmail SMTP設定
@@ -135,7 +60,7 @@ if (!$error_message) {
 
                 // 送信者・宛先
                 $mail_borrower->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
-                $mail_borrower->addAddress($email);
+                $mail_borrower->addAddress($email); // 宛先は借主のメールアドレス ($email)
                 $mail_borrower->isHTML(true);
                 $mail_borrower->CharSet = 'UTF-8';
                 $mail_borrower->Encoding = 'base64';
@@ -155,13 +80,16 @@ if (!$error_message) {
                 $mail_borrower->send();
                 $borrower_email_sent = true;
             } catch (Exception $e) {
+                // エラーメッセージは画面下部に表示する
                 $error_message .= " <br>借主への通知メール送信エラー: {$mail_borrower->ErrorInfo}";
             }
 
-            // ✅ 貸主に通知
+            // ----------------------------------------------------------------------
+            // ✅ 貸主に通知 (既存の処理)
+            // ----------------------------------------------------------------------
             $mail_lender = new PHPMailer(true);
             try {
-                // Gmail SMTP設定
+                // Gmail SMTP設定 (既存設定を使用)
                 $mail_lender->isSMTP();
                 $mail_lender->Host       = 'smtp.gmail.com';
                 $mail_lender->SMTPAuth   = true;
@@ -172,7 +100,6 @@ if (!$error_message) {
 
                 // 送信者・宛先
                 $mail_lender->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
-                // 【修正】lender_email は $debt から取得
                 $mail_lender->addAddress($debt['lender_email'], $debt['lender_name']);
 
                 // メール内容
@@ -194,20 +121,18 @@ if (!$error_message) {
                 $mail_lender->send();
                 $lender_email_sent = true;
             } catch (Exception $e) {
+                // エラーメッセージは画面下部に表示する
                 $error_message .= " <br>貸主への通知メール送信エラー: {$mail_lender->ErrorInfo}";
             }
         }
     } catch (PDOException $e) {
-        // トランザクション中にDBエラーが発生した場合
-        $pdo->rollBack();
-        $error_message = "DBトランザクションエラー: " . $e->getMessage();
+        $error_message = "DBエラー: " . $e->getMessage();
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <title>貸付承認完了</title>
@@ -222,41 +147,35 @@ if (!$error_message) {
             margin: 0;
             text-align: center;
         }
-
         .card {
             background: #fff;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             width: 450px;
             max-width: 90%;
         }
-
         .success-icon {
             color: #4CAF50;
             font-size: 80px;
             margin-bottom: 15px;
         }
-
         .error-icon {
             color: #F44336;
             font-size: 80px;
             margin-bottom: 15px;
         }
-
-        h2 {
+        h2 { 
             margin-top: 0;
             color: #333;
             font-size: 24px;
         }
-
         p {
             color: #555;
             line-height: 1.6;
             margin-bottom: 10px;
             text-align: left;
         }
-
         .details {
             background: #f8faff;
             padding: 15px;
@@ -264,13 +183,11 @@ if (!$error_message) {
             margin-top: 20px;
             text-align: left;
         }
-
         .details strong {
             display: inline-block;
             width: 100px;
             font-weight: bold;
         }
-
         .error-box {
             background-color: #ffebee;
             color: #c62828;
@@ -283,14 +200,13 @@ if (!$error_message) {
     </style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
 <body>
     <div class="card">
         <?php if ($success_message && !$error_message): ?>
             <span class="material-icons success-icon">check_circle</span>
             <h2><?= htmlspecialchars($success_message) ?></h2>
-            <p>以下の内容で貸付が正式に認証され、記録されました。</p>
-
+            <p>以下の内容で貸付が正式に**認証**され、記録されました。</p>
+            
             <div class="details">
                 <?php if ($debt): ?>
                     <p><strong>貸主:</strong> <?= htmlspecialchars($debt['lender_name']) ?></p>
@@ -312,16 +228,15 @@ if (!$error_message) {
             <span class="material-icons error-icon">error</span>
             <h2>処理中にエラーが発生しました</h2>
             <div class="error-box">
-                詳細: <?= $error_message ?>
+                **詳細:** <?= $error_message ?>
             </div>
             <p>お手数ですが、貸主に連絡して状況をご確認ください。</p>
-
+        
         <?php else: ?>
-            <span class="material-icons error-icon">warning</span>
+             <span class="material-icons error-icon">warning</span>
             <h2>処理が正しく完了しませんでした</h2>
             <p>不正なアクセス、または何らかの予期せぬエラーが発生しました。</p>
         <?php endif; ?>
     </div>
 </body>
-
 </html>

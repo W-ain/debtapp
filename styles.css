@@ -1,0 +1,469 @@
+@charset "UTF-8";
+
+/* =========================================
+   1. グローバルスタイル (共通)
+   ========================================= */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f7f9fc; /* 背景色 */
+    padding: 20px;
+    margin: 0;
+    color: #333;
+    line-height: 1.5;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* リンクの基本設定 */
+a { text-decoration: none; }
+
+/* アイコンサイズ調整 */
+.material-icons.icon-xs { font-size: 16px; margin-right: 4px; vertical-align: middle; }
+.material-icons.icon-sm { font-size: 18px; margin-right: 6px; vertical-align: middle; }
+
+
+/* =========================================
+   2. レイアウト・コンテナ
+   ========================================= */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding-top: 20px; /* ハンバーガーメニューとの兼ね合い */
+}
+
+/* ヘッダーカード (Inquiry画面上部など) */
+.header-card {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+.header-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #333;
+}
+.header-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* タイトルリンク */
+.title-link {
+    color: #333;
+    transition: opacity 0.2s;
+    display: inline-block;
+}
+.title-link:hover { opacity: 0.6; }
+
+/* 白いカード（共通） */
+.section, .detail-card, .card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   3. ボタン・入力フォーム
+   ========================================= */
+.btn, .submit-btn, button[type=submit] {
+    display: block;
+    width: 100%;
+    padding: 16px 0;
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-size: 1rem;
+    color: #fff; /* デフォルト白文字 */
+}
+.btn:hover, button[type=submit]:hover { opacity: 0.9; }
+
+/* クイックアクション (Home / Inquiry) */
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+.btn-group .btn {
+    flex: 1;
+    color: #ffffff; /* 白文字 */
+    font-size: 21px; /* 大きい文字 */
+}
+
+/* 新規貸付ボタン (青グラデーション) */
+.btn.new-loan, .submit-btn, button[type=submit] { 
+    background: linear-gradient(135deg, #5b7cff, #6af1ff); 
+}
+
+/* 照会・返済ボタン (オレンジグラデーション) */
+.btn.view-list { 
+    background: linear-gradient(135deg, #ff9a5b, #ffcf6a); 
+}
+
+/* 入力フォーム共通 */
+input[type="text"], input[type="email"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd4ff;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+
+/* =========================================
+   4. Inquiry (照会) 専用スタイル
+   ========================================= */
+
+/* フィルタータブ */
+.filter-tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e3e8f0;
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    gap: 4px;
+}
+.filter-tab {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.filter-tab.active {
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.filter-tab:hover:not(.active) {
+    background-color: rgba(255,255,255,0.5);
+}
+.type-tabs .filter-tab.active {
+    background-color: #333;
+    color: #fff;
+}
+
+/* 借金カード (Debt Card) */
+.debt-card {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid #eee; 
+    transition: opacity 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- カード色分け --- */
+/* 未返済：赤系 */
+.debt-card.card-unpaid { background-color: #fff5f5; border: 1px solid #ffcdd2; }
+.debt-card.card-unpaid::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: #ff5252;
+}
+/* 返済中：青系 */
+.debt-card.card-partial { background-color: #f0f8ff; border: 1px solid #bbdefb; }
+.debt-card.card-partial::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: #448aff;
+}
+/* 完済：緑系 */
+.debt-card.card-completed { background-color: #f1f8e9; border: 1px solid #c8e6c9; }
+.debt-card.card-completed::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: #66bb6a;
+}
+
+/* カード内要素 */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+.debtor-info strong {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #333;
+}
+.email-address {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 4px;
+}
+.amount-info { text-align: right; }
+.current-amount {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #4285f4; 
+    display: block;
+}
+.original-amount {
+    font-size: 0.8rem;
+    color: #aaa;
+    text-decoration: line-through;
+    display: block;
+    margin-top: 2px;
+}
+.due-date-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 12px;
+    gap: 8px; 
+    padding-left: 10px;
+}
+
+/* ラベル・タグ */
+.transaction-label {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+.label-loan { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+.label-borrow { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+.loan-amount { color: #4285f4; }
+.borrowing-amount { color: #d9534f; }
+
+.icon-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: auto;
+    background-color: #fff; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.tag-unpaid { color: #c62828; border: 1px solid #ffcdd2; }
+.tag-partial { color: #1565c0; border: 1px solid #bbdefb; }
+.tag-completed { color: #2e7d32; border: 1px solid #c8e6c9; }
+
+/* ステータス情報エリア */
+.status-partial {
+    display: flex;
+    align-items: center;
+    background-color: #fffde6;
+    color: #a08000;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    margin-left: 10px;
+}
+
+/* 返済記録ボタン (Inquiry内) */
+.btn-primary {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    padding: 12px 0;
+    margin-top: 10px;
+    border: 1px solid #dadce0; 
+}
+/* 親要素に応じたボタン色調整 */
+.debt-card.card-unpaid .btn-primary { background-color: #fce8e8; border-color: #fad2d2; color: #8c3b3b; }
+.debt-card.card-partial .btn-primary { background-color: #e8f0fe; border-color: #d2e3fc; color: #1967d2; }
+.debt-card.card-completed .btn-primary { background-color: #e6f4ea; border-color: #ceead6; color: #137333; }
+
+
+/* =========================================
+   5. Home (ホーム) 専用スタイル
+   ========================================= */
+.item {
+    border-radius: 10px;
+    padding: 12px;
+    background: #fffbea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.pending-item {
+    background-color: #fff8e1;
+    border-left: 4px solid #ffa000;
+}
+.pending-badge {
+    font-size: 0.7rem;
+    background: #ffa000;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* --- ハンバーガーメニュー --- */
+.menu-btn {
+    position: fixed;
+    top: 15px; right: 15px;
+    background: transparent;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background-color 0.2s;
+}
+.menu-btn:hover { background-color: rgba(0, 0, 0, 0.05); }
+.menu-btn .material-icons { color: #333; font-size: 32px; }
+
+.menu-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0; visibility: hidden;
+    transition: all 0.3s;
+    z-index: 1001;
+}
+.menu-overlay.active { opacity: 1; visibility: visible; }
+
+.menu-drawer {
+    position: fixed;
+    top: 0; right: -250px;
+    width: 250px; height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1002;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.menu-drawer.active { right: 0; }
+.menu-close { align-self: flex-end; cursor: pointer; padding: 10px; margin-bottom: 20px; }
+.menu-list { list-style: none; padding: 0; margin: 0; }
+.menu-item { margin-bottom: 15px; }
+.menu-link {
+    display: flex; align-items: center;
+    text-decoration: none; color: #333;
+    font-size: 16px; font-weight: bold;
+    padding: 12px; border-radius: 8px;
+    transition: background 0.2s;
+}
+.menu-link:hover { background-color: #f0f4ff; color: #5b7cff; }
+.menu-link .material-icons { margin-right: 12px; color: #888; }
+.menu-link:hover .material-icons { color: #5b7cff; }
+.logout { color: #d9534f; }
+
+
+/* =========================================
+   6. Record (返済記録) 専用スタイル
+   ========================================= */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    color: #666;
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: #333; }
+
+.detail-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid #eee;
+    font-size: 1.1rem;
+}
+.label { color: #666; font-weight: 500; }
+.value { font-weight: 700; color: #333; }
+.highlight { font-size: 1.3rem; color: #d9534f; }
+.tamper-check {
+    margin-top: 15px; padding: 10px;
+    border-radius: 8px; font-weight: bold;
+    text-align: center;
+}
+.tamper-ok { background: #d4edda; color: #155724; }
+.tamper-warning { background: #f8d7da; color: #721c24; }
+
+
+/* =========================================
+   7. Regist (貸付登録) 専用スタイル
+   ========================================= */
+.icon-btn-container { display: flex; gap: 10px; margin-bottom: 15px; }
+.icon-btn {
+    flex: 1; padding: 14px;
+    background: #f8faff;
+    border: 1px dashed #b6c2ff;
+    border-radius: 10px;
+    text-align: center; cursor: pointer;
+}
+.close-btn {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 1.8rem; color: #ccc; cursor: pointer;
+}
+
+/* =========================================
+   8. Sort (並び替え) 専用スタイル
+   ========================================= */
+.sort-section {
+    margin-bottom: 20px;
+    text-align: right; /* 右寄せにする */
+}
+
+.sort-form {
+    display: inline-block;
+}
+
+.sort-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.sort-select {
+    padding: 8px 12px;
+    border: 1px solid #ccd4ff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    /* モバイルで見やすいように少し大きさを確保 */
+    min-width: 160px;
+}
+
+.sort-select:focus {
+    border-color: #5b7cff;
+}
+
+/* 既存のフォームスタイルの上書きが必要な場合 */
+.sort-section form {
+    margin: 0;
+    padding: 0;
+}

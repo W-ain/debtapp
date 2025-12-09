@@ -51,12 +51,12 @@ define('MAIL_ENCRYPTION', 'tls');
 // ================================
 // 🔐 Google OAuth 設定
 // ================================
-define('GOOGLE_CLIENT_ID',     '887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
+define('GOOGLE_CLIENT_ID', '887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 define('GOOGLE_CLIENT_SECRET', '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');
-define('GOOGLE_REDIRECT_URI',  'http://localhost/debtapp/login/google_callback.php');
+define('GOOGLE_REDIRECT_URI', 'http://localhost/debtapp/login/google_callback.php');
 
 // Google API 認証URL
-$google_auth_endpoint   = "https://accounts.google.com/o/oauth2/v2/auth";
-$google_token_endpoint  = "https://oauth2.googleapis.com/token";
+$google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+$google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
 ?>

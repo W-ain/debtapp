@@ -63,21 +63,12 @@ if (isset($tokenData['error'])) {
 $client->setAccessToken($tokenData['access_token']);
 $oauth = new Oauth2($client);
 $userInfo = $oauth->userinfo->get();
-
-// 【修正箇所】ここで $google_id を取得します。
 $email = $userInfo->email;
 $name = $userInfo->name;
-$google_id = $userInfo->id; // Google IDを取得
 
 // 処理が完了したのでセッションをクリア
 unset($_SESSION['verification_token']);
-unset($_SESSION['google_auth_code']);
-
-$_SESSION['verified_user'] = [
-    'google_id' => $google_id,
-    'email' => $email,
-    'name' => $name
-];
+unset($_SESSION['google_auth_code']); 
 
 
 // ----------------------------------------------------------------------
