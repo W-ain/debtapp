@@ -9,14 +9,36 @@ error_reporting(E_ALL);
 // ================================
 // 🗄️ データベース接続設定（ローカル）
 // ================================
-$host = "localhost";
+// $host = "localhost";
+// $dbname = "mydb";   // ← 現在のDB名
+// $dbuser = "general_user";   // XAMPP/MAMP のデフォルトユーザー
+// $dbpass = "general_password";       // パスワードなし（デフォルト）
+
+// try {
+//     $pdo = new PDO(
+//         "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+//         $dbuser,
+//         $dbpass,
+//         [
+//             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+//             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+//         ]
+//     );
+// } catch (PDOException $e) {
+//     exit("❌ DB接続エラー: " . $e->getMessage());
+// }
+
+// ================================
+// 🗄️ データベース接続設定（本番環境）
+// ================================
+$host = "/cloudsql/PROJECT:REGION:INSTANCE/cloudsql/moonlit-academy-477401-t5:us-central1:myapp-sql";
 $dbname = "mydb";   // ← 現在のDB名
 $dbuser = "general_user";   // XAMPP/MAMP のデフォルトユーザー
 $dbpass = "general_password";       // パスワードなし（デフォルト）
 
 try {
     $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        "mysql:unix_socket=$host;dbname=$dbname;charset=utf8mb4",
         $dbuser,
         $dbpass,
         [
@@ -59,4 +81,5 @@ define('GOOGLE_REDIRECT_URI', 'http://localhost/debtapp/login/google_callback.ph
 $google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
+
 ?>
