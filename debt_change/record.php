@@ -85,13 +85,13 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>返済記録</title>
-    <link rel="stylesheet" href="/debtapp/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="/styles.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
     <div class="container">
         <div class="detail-card">
-            <a href="/debtapp/inquiry/inquiry.php" class="back-link">＜ 戻る</a>
+            <a href="/inquiry/inquiry.php" class="back-link">＜ 戻る</a>
 
             <h2>返済を記録</h2>
             <div class="detail-row"><span class="label">借主</span><span
@@ -112,7 +112,7 @@ try {
 
             <?php if ($remaining_amount > 0): ?>
                 <?php if ($is_creditor): ?>
-                    <form action="/debtapp/debt_change/process.php" method="POST">
+                    <form action="/debt_change/process.php" method="POST">
                         <label for="repay_amount">今回返済された金額 (¥)</label>
                         <input type="number" id="repay_amount" name="repay_amount" min="1" max="<?= $remaining_amount ?>"
                             required>
@@ -130,3 +130,4 @@ try {
 
 
 </html>
+
