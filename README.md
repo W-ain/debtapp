@@ -10,7 +10,7 @@ Cloud Buildが自動でビルド → Cloud Runにデプロイ
 ⚠️現在デプロイ中です（ミネヤ/2025_12_09内のsqlファイルとアプリ(.zip)をデプロイ中）
 
 ### ローカルからの変更点
-- ファイル指定URI
+- ファイル指定URI  
 ✖　http://localhost/debtapp/...  
 〇　https://debtapp-565547399529.asia-northeast1.run.app/...
 
