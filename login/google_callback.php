@@ -50,8 +50,9 @@ $user = $stmt->fetch();
 // いなければユーザー登録
 if (!$user) {
     // 【修正点 2/3】 name -> user_name に変更。is_verifiedはテーブルにないので削除。
-    $stmt = $pdo->prepare("INSERT INTO users (user_name, email) VALUES (?, ?)");
-    $stmt->execute([$name, $email]);
+    // password_hashが必須カラムの為、''（空文字）を渡す（ワタナベ）
+    $stmt = $pdo->prepare("INSERT INTO users (user_name, email, password_hash) VALUES (?, ?, ?)");
+    $stmt->execute([$name, $email, '']);
     $user_id = $pdo->lastInsertId();
 } else {
     // 【修正点 3/3】 $user['id'] -> $user['user_id'] に変更
@@ -64,6 +65,7 @@ $_SESSION['email']   = $email;
 $_SESSION['name']    = $name;
 
 // ✅ ホーム画面へリダイレクト (変更なし)
-header("Location: /debtapp/home/home.php");
+header("Location: /home/home.php");
 
 exit;
+
