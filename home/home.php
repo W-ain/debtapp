@@ -49,7 +49,7 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ホーム | 借金管理アプリ</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="/debtapp/styles.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="/styles.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
@@ -67,27 +67,27 @@ try {
 
     <ul class="menu-list">
       <li class="menu-item">
-        <a href="/debtapp/home/home.php" class="menu-link">
+        <a href="/home/home.php" class="menu-link">
           <span class="material-icons">home</span>
           ホーム
         </a>
       </li>
 
       <li class="menu-item">
-        <a href="/debtapp/Regist/Regist.php" class="menu-link">
+        <a href="/Regist/Regist.php" class="menu-link">
           <span class="material-icons">add_circle</span>
           貸付
         </a>
       </li>
       <li class="menu-item">
-        <a href="/debtapp/inquiry/inquiry.php" class="menu-link">
+        <a href="/inquiry/inquiry.php" class="menu-link">
           <span class="material-icons">payment</span>
           返済
         </a>
       </li>
       <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;"></li>
       <li class="menu-item">
-        <a href="/debtapp/login/google_login.php" class="menu-link logout">
+        <a href="/login/google_login.php" class="menu-link logout">
           <span class="material-icons">logout</span>
           ログアウト
         </a>
@@ -100,8 +100,8 @@ try {
 
     <div class="section">
       <div class="btn-group">
-        <a class="btn new-loan" href="/debtapp/Regist/Regist.php">貸付</a>
-        <a class="btn view-list" href="/debtapp/inquiry/inquiry.php">返済</a>
+        <a class="btn new-loan" href="/Regist/Regist.php">貸付</a>
+        <a class="btn view-list" href="/inquiry/inquiry.php">返済</a>
       </div>
     </div>
 
@@ -186,3 +186,4 @@ try {
 
 
 </html>
+
