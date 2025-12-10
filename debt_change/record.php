@@ -9,7 +9,7 @@ $user_email = $_SESSION['email'] ?? null;
 $debt_id = $_SESSION['view_debt_id'] ?? null;
 
 if (!$user_id || !$debt_id) {
-    exit('エラー: 必要な情報が不足しています。<a href="/debtapp/inquiry/inquiry.php">inquiry.php</a>から再度アクセスしてください。');
+    exit('エラー: 必要な情報が不足しています。<a href="/inquiry/inquiry.php">inquiry.php</a>から再度アクセスしてください。');
 }
 
 try {
@@ -127,5 +127,6 @@ try {
         </div>
     </div>
 </body>
+
 
 </html>
