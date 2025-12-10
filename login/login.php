@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once 'config.php';
+require_once '../config.php';
 // require_once 'db.php';
 
 
 // // DBからユーザー取得
-$sql = "SELECT id, password_hash, is_verified FROM users WHERE email = ?";
+$sql = "SELECT user_id, password_hash, is_verified FROM users WHERE email = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,3 +29,4 @@ $_SESSION['user_id'] = $user['id'];
 
 header("Location: dashboard.php");
 exit;
+
