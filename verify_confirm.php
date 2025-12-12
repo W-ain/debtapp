@@ -205,7 +205,7 @@ if (!$error_message) {
         <?php if ($success_message && !$error_message): ?>
             <span class="material-icons success-icon">check_circle</span>
             <h2><?= htmlspecialchars($success_message) ?></h2>
-            <p>以下の内容で貸付が正式に**認証**され、記録されました。</p>
+            <p>以下の内容で貸付が正式に認証され、記録されました。</p>
             
             <div class="details">
                 <?php if ($debt): ?>
@@ -239,4 +239,5 @@ if (!$error_message) {
         <?php endif; ?>
     </div>
 </body>
+
 </html>
