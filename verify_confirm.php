@@ -197,6 +197,11 @@ if (!$error_message) {
             text-align: left;
             border: 1px solid #ef9a9a;
         }
+        .note {	
+            font-size: 0.9em;	
+            color: #888;	
+            margin-top: 20px;	
+        }
     </style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -223,6 +228,8 @@ if (!$error_message) {
                     <br>貸主（<?= htmlspecialchars($debt['lender_name'] ?? '---') ?>）: <?= $lender_email_sent ? '✅ 送信済み' : '❌ 送信エラー' ?>
                 </p>
             </div>
+        
+            <p class="note">貸主に承認通知が送信されます。<br>この画面は閉じて構いません。</p>
 
         <?php elseif ($error_message): ?>
             <span class="material-icons error-icon">error</span>
@@ -241,3 +248,4 @@ if (!$error_message) {
 </body>
 
 </html>
+
