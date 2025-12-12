@@ -13,6 +13,51 @@ if (!$user_id) {
   exit;
 }
 
+// -----------------------------------------------------------
+// Cookieを使った未読チェックロジック (本番用)
+// -----------------------------------------------------------
+$modal_data = null;
+$target_debt_id = null;
+
+// Cookieから「すでに通知済みのIDリスト」を取得
+$cookie_name = 'notified_approval_ids';
+$notified_ids_cookie = $_COOKIE[$cookie_name] ?? '';
+$notified_ids = explode(',', $notified_ids_cookie);
+
+try {
+  // 自分宛(creditor_id)で、承認済み(verified=1)のデータを全て取得
+  // created_at が新しい順（直近の承認）
+  $stmt_check = $pdo->prepare("
+      SELECT * FROM debts 
+      WHERE creditor_id = ? AND verified = 1 
+      ORDER BY created_at DESC
+  ");
+  $stmt_check->execute([$user_id]);
+  $approved_debts = $stmt_check->fetchAll(PDO::FETCH_ASSOC);
+
+  // 取得した承認済みデータの中で、CookieにIDがないものを探す
+  foreach ($approved_debts as $ad) {
+    // ID (debt_id) がCookieのリストに含まれていなければ「未読」とみなす
+    // ※debt_id が null の場合は id を見るようにフォールバック
+    $current_id = $ad['debt_id'] ?? $ad['id'];
+
+    if (!in_array((string) $current_id, $notified_ids)) {
+
+      $modal_data = [
+        'title' => '承認のお知らせ',
+        'message' => "借主（" . htmlspecialchars($ad['debtor_name']) . "）が<br>貸付（¥" . number_format($ad['money']) . "）を承認しました！"
+      ];
+
+      $target_debt_id = $current_id;
+      break; // 1回のリロードにつき1件ずつ表示する
+    }
+  }
+
+} catch (PDOException $e) {
+  // エラー時は通知を出さない
+}
+  
+
 // 1. 貸付データ取得（期限順、承認済み verified = 1 のもの）
 try {
   $stmt = $pdo->prepare("
@@ -53,7 +98,16 @@ try {
 </head>
 
 <body>
-
+  <div class="modal-overlay" id="notificationModal">
+    <div class="modal-box">
+      <span class="material-icons"
+        style="font-size: 60px; color: #4CAF50; margin-bottom: 10px;">notifications_active</span>
+      <h3 id="modalTitle">完了</h3>
+      <p id="modalMessage">処理が完了しました。</p>
+      <button class="modal-close-btn" onclick="closeNotificationModal()">確認しました</button>
+    </div>
+  </div>
+  
   <div class="menu-btn" onclick="toggleMenu()">
     <span class="material-icons">menu</span>
   </div>
@@ -186,4 +240,5 @@ try {
 
 
 </html>
+
 
