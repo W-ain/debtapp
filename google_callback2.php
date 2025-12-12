@@ -125,10 +125,18 @@ if ($proof_image_path_db) {
     <meta charset="UTF-8">
     <title>貸付確認ページ</title>
     <script>
-    function confirmApproval() {
-        if (confirm("この内容で承認してもよろしいですか？")) {
-            document.getElementById("approveForm").submit();
-        }
+    function openApprovalModal() {
+        document.getElementById('approvalModal').style.display = 'flex';
+    }
+
+    function closeApprovalModal() {
+        document.getElementById('approvalModal').style.display = 'none';
+    }
+
+    function submitApproval() {
+        closeApprovalModal();
+        // 承認フォームを送信
+        document.getElementById("approveForm").submit();
     }
     </script>
     <style>
@@ -217,6 +225,80 @@ if ($proof_image_path_db) {
     .button:hover {
         opacity: 0.9;
     }
+    
+    /* --- 新規追加: モーダルスタイル --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none; /* 初期状態は非表示 */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 350px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+    .modal-content p {
+        color: #666;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .modal-actions button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .btn-approve {
+        background: #4CAF50; /* 緑 */
+        color: white;
+    }
+
+    .btn-approve:hover {
+        background: #45a049;
+    }
+
+    .btn-cancel {
+        background: #e0e0e0;
+        color: #333;
+    }
+
+    .btn-cancel:hover {
+        background: #ccc;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
     </style>
 </head>
 <body>
@@ -251,9 +333,20 @@ if ($proof_image_path_db) {
     <form id="approveForm" method="POST" action="verify_confirm.php">
         <input type="hidden" name="token" value="<?= htmlspecialchars($verified_token) ?>">
         <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
-        <button type="button" class="button" onclick="confirmApproval()">承認する</button>
+        <button type="button" class="button" onclick="openApprovalModal()">承認する</button>
     </form>
 </div>
-</body>
 
+<div id="approvalModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>承認の確認</h3>
+        <p>この内容で間違いありませんか？承認すると、貸付が正式に登録されます。</p>
+        <div class="modal-actions">
+            <button type="button" class="btn-approve" onclick="submitApproval()">承認する</button>
+            <button type="button" class="btn-cancel" onclick="closeApprovalModal()">キャンセル</button>
+        </div>
+    </div>
+</div>
+
+</body>
 </html>
