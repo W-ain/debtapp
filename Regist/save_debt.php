@@ -279,7 +279,7 @@ try {
 
 } catch (Exception $e) {
     $response_message = "メール送信失敗: " . strip_tags($e->getMessage());
-    $redirect_url     = '../dashboard.php';
+    $redirect_url     = '../home/home.php';
 }
 
 // -------------------------------------------------------------------
@@ -391,6 +391,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
