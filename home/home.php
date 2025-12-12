@@ -234,11 +234,61 @@ try {
         closeMenu();
       }
     });
+    // -----------------------------------------------------------
+    // ✅ Cookieを使ったモーダル制御機能
+    // -----------------------------------------------------------
+    const modal = document.getElementById('notificationModal');
+
+    // PHPから渡されたデータ
+    const modalData = <?= json_encode($modal_data) ?>;
+    const targetDebtId = <?= json_encode($target_debt_id) ?>;
+    const cookieName = 'notified_approval_ids';
+
+    // Cookie取得用ヘルパー関数
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return '';
+    }
+
+    // CookieにIDを追加する関数 (有効期限1年)
+    function addIdToCookie(id) {
+      let currentIds = getCookie(cookieName);
+      if (currentIds && currentIds !== '') {
+        currentIds += ',' + id;
+      } else {
+        currentIds = id;
+      }
+      document.cookie = `${cookieName}=${currentIds}; path=/; max-age=31536000`;
+    }
+
+    // モーダルデータがある場合のみ実行
+    if (modalData) {
+      document.getElementById('modalTitle').textContent = modalData.title;
+      document.getElementById('modalMessage').innerHTML = modalData.message;
+
+      // モーダルを表示
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 100);
+
+      // ✅ 「表示した」という事実をCookieに残す（コメントアウト解除済み）
+      // これにより次回リロード時からは表示されなくなります
+      if (targetDebtId) {
+        addIdToCookie(targetDebtId);
+      }
+    }
+
+    function closeNotificationModal() {
+      modal.classList.remove('active');
+    }
   </script>
 
 </body>
 
 
 </html>
+
 
 
