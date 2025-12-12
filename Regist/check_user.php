@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // パス修正
+require_once '../config.php'; // パス修正
 
 header('Content-Type: application/json');
 
@@ -44,4 +44,5 @@ try {
 }
 
 echo json_encode($response);
+
 ?>
