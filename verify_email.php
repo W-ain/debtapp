@@ -67,6 +67,10 @@ $authUrl = $client->createAuthUrl();
 <meta charset="UTF-8">
 <title>貸付確認ページ</title>
 <style>
+/* ★修正: スマホで見やすくするためのスタイル調整 */
+* {
+    box-sizing: border-box; /* 幅の計算を楽にする設定 */
+}
 /* スタイルは省略 */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -76,19 +80,24 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    padding: 20px; /* スマホで端っこがくっつかないように余白を追加 */
 }
 
 .card {
     background: #ffffff;
-    padding: 30px 40px;
+    /* padding: 30px 40px; */
+    padding: 30px 20px; /* スマホ用に左右の余白を少し減らす */
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    width: 420px; 
+    /* width: 420px;  */
+    /* 幅の固定をやめて、最大幅を指定する */
+    width: 100%;
+    max-width: 420px;
     text-align: center;
 }
 
 h2 {
-    font-size: 24px;
+    font-size: 22px;
     color: #333;
     margin-bottom: 30px;
     font-weight: 600;
@@ -105,20 +114,27 @@ h2 {
 
 .info-item {
     display: flex;
+    justify-content: space-between; /* ラベルと値を左右に離す */
     margin-bottom: 12px;
     color: #555;
+    align-items: center;
 }
 
 .label {
     font-weight: 500;
     color: #333;
-    width: 100px;
-    flex-shrink: 0;
+    /* width: 100px;
+    flex-shrink: 0; */
+    /* 固定幅をやめて、最低限の幅を確保 */
+    min-width: 80px; 
+    margin-right: 10px;
 }
 
 .value {
     font-weight: 400;
-    flex-grow: 1;
+    /* flex-grow: 1; */
+    text-align: right; /* スマホで見やすいよう右寄せに */
+    word-break: break-all; /* 長いメールアドレスなどがはみ出ないように改行 */
 }
 
 
@@ -128,7 +144,8 @@ h2 {
     background: #4285f4; 
     color: white;
     text-align: center;
-    padding: 14px 18px;
+    /* padding: 14px 18px; */
+    padding: 14px 0; /* 左右パディングを消して中央揃えを確実に */
     border-radius: 8px;
     font-weight: bold;
     font-size: 16px;
@@ -136,9 +153,9 @@ h2 {
     text-decoration: none;
     cursor: pointer;
     transition: background 0.3s;
-    box-sizing: border-box;
+    /* box-sizing: border-box;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: auto; */
 }
 
 .button:hover {
@@ -175,3 +192,4 @@ h2 {
 </body>
 
 </html>
+
