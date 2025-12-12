@@ -1,12 +1,13 @@
 @charset "UTF-8";
 
 /* =========================================
-   1. グローバルスタイル (共通)
-   ========================================= */
+    1. グローバルスタイル (共通)
+    ========================================= */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: #f7f9fc; /* 背景色 */
-    padding: 20px;
+    /* 修正: paddingを削除し、.containerで制御する */
+    /* padding: 20px; */ 
     margin: 0;
     color: #333;
     line-height: 1.5;
@@ -25,12 +26,14 @@ a { text-decoration: none; }
 
 
 /* =========================================
-   2. レイアウト・コンテナ
-   ========================================= */
+    2. レイアウト・コンテナ
+    ========================================= */
 .container {
     max-width: 500px;
     margin: 0 auto;
-    padding-top: 20px; /* ハンバーガーメニューとの兼ね合い */
+    /* 修正: 左右のパディングをここで確保 */
+    padding: 0 20px; 
+    padding-top: 20px; 
 }
 
 /* ヘッダーカード (Inquiry画面上部など) */
@@ -72,8 +75,8 @@ a { text-decoration: none; }
 
 
 /* =========================================
-   3. ボタン・入力フォーム
-   ========================================= */
+    3. ボタン・入力フォーム
+    ========================================= */
 .btn, .submit-btn, button[type=submit] {
     display: block;
     width: 100%;
@@ -125,8 +128,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 
 
 /* =========================================
-   4. Inquiry (照会) 専用スタイル
-   ========================================= */
+    4. Inquiry (照会) 専用スタイル
+    ========================================= */
 
 /* フィルタータブ */
 .filter-tabs {
@@ -218,6 +221,7 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
     font-weight: 800;
     color: #4285f4; 
     display: block;
+    text-align: right; /* 視認性向上のため追加 */
 }
 .original-amount {
     font-size: 0.8rem;
@@ -295,8 +299,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 
 
 /* =========================================
-   5. Home (ホーム) 専用スタイル
-   ========================================= */
+    5. Home (ホーム) 専用スタイル
+    ========================================= */
 .item {
     border-radius: 10px;
     padding: 12px;
@@ -377,8 +381,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 
 
 /* =========================================
-   6. Record (返済記録) 専用スタイル
-   ========================================= */
+    6. Record (返済記録) 専用スタイル
+    ========================================= */
 .back-link {
     display: inline-flex;
     align-items: center;
@@ -393,8 +397,10 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 
 .detail-row {
     display: flex; justify-content: space-between;
-    padding: 8px 0; border-bottom: 1px solid #eee;
+    padding: 12px 0; /* 修正: paddingを増やして見やすく */
+    border-bottom: 1px solid #eee;
     font-size: 1.1rem;
+    align-items: center; /* 中央揃えを追加 */
 }
 .label { color: #666; font-weight: 500; }
 .value { font-weight: 700; color: #333; }
@@ -409,8 +415,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 
 
 /* =========================================
-   7. Regist (貸付登録) 専用スタイル
-   ========================================= */
+    7. Regist (貸付登録) 専用スタイル
+    ========================================= */
 .icon-btn-container { display: flex; gap: 10px; margin-bottom: 15px; }
 .icon-btn {
     flex: 1; padding: 14px;
@@ -425,8 +431,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 }
 
 /* =========================================
-   8. Sort (並び替え) 専用スタイル
-   ========================================= */
+    8. Sort (並び替え) 専用スタイル
+    ========================================= */
 .sort-section {
     margin-bottom: 20px;
     text-align: right; /* 右寄せにする */
@@ -469,8 +475,8 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
 }
 
 /* =========================================
-   モーダル（ポップアップ）用スタイル
-   ========================================= */
+    モーダル（ポップアップ）用スタイル
+    ========================================= */
 
 /* モーダル背景（オーバーレイ） */
 .modal-overlay {
