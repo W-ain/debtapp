@@ -467,3 +467,62 @@ input[type="text"], input[type="email"], input[type="number"], input[type="date"
     margin: 0;
     padding: 0;
 }
+
+/* =========================================
+   モーダル（ポップアップ）用スタイル
+   ========================================= */
+
+/* モーダル背景（オーバーレイ） */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* 半透明の黒 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* 最前面に表示 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* 表示時のクラス */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* モーダルウィンドウ本体 */
+.modal-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s;
+}
+
+.modal-overlay.active .modal-box {
+    transform: scale(1);
+}
+
+/* モーダル内の閉じるボタン */
+.modal-close-btn {
+    margin-top: 20px;
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: #357ae8;
+}
