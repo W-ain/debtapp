@@ -31,7 +31,6 @@ use PHPMailer\PHPMailer\Exception;
 // =============================================================================================
 
 // 【本番環境用：GCPデプロイ後にコメント解除してください】
-/*
 // Cloud SchedulerまたはCLI(コマンドライン)からのリクエストのみ許可
 $allowed = false;
 if (isset($_SERVER['HTTP_X_CLOUDSCHEDULER']) || php_sapi_name() === 'cli') {
@@ -43,10 +42,9 @@ if (!$allowed) {
     echo "Access Denied: This endpoint is only accessible via Cloud Scheduler";
     exit;
 }
-*/
 
 // Cloud Scheduler設定メモ（デプロイ後にやる）
-// 名前: remind-daily
+// 名前: remind
 // 頻度: 0 9 * * * (毎日午前9時)
 // タイムゾーン: Asia/Tokyo
 // ターゲット: HTTP
@@ -151,3 +149,4 @@ try {
 }
 
 echo "<br>--- 処理終了 ---\n";
+
