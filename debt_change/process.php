@@ -18,10 +18,16 @@ $repay_amount = (int)($_POST['repay_amount'] ?? 0);
 $current_remaining_amount = (int)($_POST['remaining_amount'] ?? 0);
 
 if (!$user_id || !$debt_id || $repay_amount <= 0) {
-    exit("エラー: 不正な操作または金額です。");
+    exit("<script>
+        alert('エラー: 画面の有効期限が切れているか、正しく遷移されていません。\\n\\nもう一度お試しください。');
+        window.location.href = '/inquiry/inquiry.php';
+    </script>");
 }
 if ($repay_amount > $current_remaining_amount) {
-    exit("エラー: 返済額が残り金額 (¥" . number_format($current_remaining_amount) . ") を超えています。");
+    exit("<script>
+        alert('エラー: 返済額が残り金額 (¥" . number_format($current_remaining_amount) . ") を超えています。\\n\\nもう一度お試しください。');
+        window.location.href = '/inquiry/inquiry.php';
+    </script>");
 }
 
 $new_remaining_amount = $current_remaining_amount - $repay_amount;
@@ -187,4 +193,5 @@ echo "window.location.href = " . json_encode($redirect_url) . ";";
 echo "</script>";
 echo "</body></html>";
 exit;
+
 ?>
