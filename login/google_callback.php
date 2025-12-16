@@ -4,7 +4,14 @@ require_once '../config.php';
 
 // Googleから返されたcodeを取得
 if (!isset($_GET['code'])) {
-    exit('Error: No code provided.');
+    // exit('Error: No code provided.');
+    error_log("Error: No code provided.");
+    exit("
+        <script>
+            alert('ログイン処理が中断されました。\\n\\n再度ログインしてください。');
+            window.location.href = '/debtapp/login/google_login.html';
+        </script>
+    ");
 }
 
 // --- 認証コードを使ってアクセストークン取得 (変更なし) ---
@@ -27,7 +34,14 @@ curl_close($ch);
 $token = json_decode($response, true);
 
 if (!isset($token['access_token'])) {
-    exit('Error: Failed to get access token.');
+    // exit('Error: Failed to get access token.');
+    error_log("Error: Failed to get access token.");
+    exit("
+        <script>
+            alert('システムエラーにより、Googleログインが完了しませんでした。\\n\\n少し時間をおいて再度お試しください。');
+            window.location.href = '/debtapp/login/google_login.html';
+        </script>
+    ");
 }
 
 // --- Googleユーザー情報取得 (変更なし) ---
@@ -68,4 +82,5 @@ $_SESSION['name']    = $name;
 header("Location: /home/home.php");
 
 exit;
+
 
