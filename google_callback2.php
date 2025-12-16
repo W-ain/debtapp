@@ -1,136 +1,314 @@
 <?php
 session_start();
-
 require_once 'vendor/autoload.php';
-require_once 'config.php';
+require_once 'config.php'; 
 
 use Google\Client;
 use Google\Service\Oauth2;
 
-// ----------------------------------------------------------------------
 // Google認証設定
-// ----------------------------------------------------------------------
 $client = new Client();
 $client->setClientId('887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri(
-    'https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'
-);
+$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
 
 $url_has_token = isset($_GET['token']);
 $url_has_code  = isset($_GET['code']);
 
-// ----------------------------------------------------------------------
-// 1. token付き初回アクセス → Google認証開始
-// ----------------------------------------------------------------------
 if ($url_has_token && !$url_has_code) {
     $verified_token = $_GET['token'];
 
     // トークンをセッションに一時保存
     $_SESSION['verification_token'] = $verified_token;
 
-    // Google認証へリダイレクト
+    // トークンをセッションに保存した後、Google認証を開始する
     $auth_url = $client->createAuthUrl(['email', 'profile']);
-    header('Location: ' . $auth_url);
+    header("Location: " . $auth_url);
     exit;
 }
 
-// ----------------------------------------------------------------------
-// 2. Googleからのリダイレクト（code取得）
-// ----------------------------------------------------------------------
 if ($url_has_code) {
+    // codeをセッションに一時保存
     $_SESSION['google_auth_code'] = $_GET['code'];
 
-    // codeをURLから除去
-    header(
-        'Location: https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'
-    );
+    // クリーンなURL（クエリなし）にリダイレクトし、ブラウザのURLからcodeを削除
+    header('Location: https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php');
     exit;
 }
 
 // ----------------------------------------------------------------------
-// 3. セッションから token / code を取得
+// 3. 最終処理段階: セッションから code と token を取得し、処理を実行
 // ----------------------------------------------------------------------
 $verified_token = $_SESSION['verification_token'] ?? null;
 $auth_code      = $_SESSION['google_auth_code'] ?? null;
 
+// トークンもコードもなければエラー
 if (!$verified_token || !$auth_code) {
-    unset($_SESSION['verification_token'], $_SESSION['google_auth_code']);
+    // 処理が完了したらセッションのキーをクリアしておく（安全のため）
+    unset($_SESSION['verification_token']);
+    unset($_SESSION['google_auth_code']);
     exit('エラー: 認証情報が不足しています。最初からやり直してください。');
 }
 
-// ----------------------------------------------------------------------
-// Google認証処理
-// ----------------------------------------------------------------------
+// セッションから認証コードを使ってアクセストークンを取得
 $tokenData = $client->fetchAccessTokenWithAuthCode($auth_code);
-
 if (isset($tokenData['error'])) {
-    unset($_SESSION['verification_token'], $_SESSION['google_auth_code']);
+    // エラー時はセッションをクリア
+    unset($_SESSION['verification_token']);
+    unset($_SESSION['google_auth_code']);
     exit('Google認証エラー: ' . htmlspecialchars($tokenData['error']));
 }
 
 $client->setAccessToken($tokenData['access_token']);
-
 $oauth    = new Oauth2($client);
 $userInfo = $oauth->userinfo->get();
+$email    = $userInfo->email;
+$name     = $userInfo->name;
 
-$email = $userInfo->email;
-$name  = $userInfo->name;
-
-// 認証完了後はセッションクリア
-unset($_SESSION['verification_token'], $_SESSION['google_auth_code']);
+// 処理が完了したのでセッションをクリア
+unset($_SESSION['verification_token']);
+unset($_SESSION['google_auth_code']);
 
 // ----------------------------------------------------------------------
-// DB確認処理
+// DB接続と確認 (ここから元の処理)
 // ----------------------------------------------------------------------
 try {
-    $stmt = $pdo->prepare(
-        "
-        SELECT
-            d.*,
-            u.user_name AS lender_name
+    $stmt = $pdo->prepare("
+        SELECT d.*, u.user_name AS lender_name
         FROM debts d
         JOIN users u ON d.creditor_id = u.user_id
         WHERE d.token = ?
-        "
-    );
+    ");
     $stmt->execute([$verified_token]);
     $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$debt) {
-        exit('該当する貸付情報が見つかりません。');
+        exit("該当する貸付情報が見つかりません。");
     }
 
     if ($debt['debtor_email'] !== $email) {
-        exit(
-            '認証されたGoogleアカウントのメールアドレスが、'
-            . '貸付情報に登録されたメールアドレスと一致しません。'
-        );
+        exit("認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。");
     }
 } catch (PDOException $e) {
-    exit('DBエラー: ' . $e->getMessage());
+    exit("DBエラー: " . $e->getMessage());
 }
 
-// ----------------------------------------------------------------------
-// 証拠画像HTML生成
-// ----------------------------------------------------------------------
-$image_html = '';
+// ===================================================================
+// 証拠画像パスの処理とHTML生成
+// ===================================================================
+$image_html          = '';
 $proof_image_path_db = $debt['proof_image_path'] ?? null;
 
 if ($proof_image_path_db) {
+    // DBに保存されているパス（例: ../uploads/proofs/...）から、
+    // HTMLのsrc属性として正しいパス（例: uploads/proofs/...）に調整
     $image_src = str_replace('../', '', $proof_image_path_db);
 
     $image_html = '
         <div class="info-item image-item">
             <span class="label">証拠画像:</span>
             <div class="proof-image-wrapper">
-                <img
-                    src="' . htmlspecialchars($image_src) . '"
-                    alt="証拠画像"
-                    class="proof-image"
-                />
+                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
             </div>
         </div>
     ';
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>貸付確認ページ</title>
+
+    <script>
+        function openApprovalModal() {
+            document.getElementById('approvalModal').style.display = 'flex';
+        }
+
+        function closeApprovalModal() {
+            document.getElementById('approvalModal').style.display = 'none';
+        }
+
+        function submitApproval() {
+            closeApprovalModal();
+            document.getElementById("approveForm").submit();
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .info-card {
+            background: #f4f6fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .label {
+            font-weight: 500;
+            color: #333;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .value {
+            font-weight: 400;
+            flex-grow: 1;
+        }
+
+        .proof-image-wrapper {
+            margin-top: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .proof-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #5b7cff, #6af1ff);
+            color: white;
+            text-align: center;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 25px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>貸付内容の確認</h2>
+
+        <div class="info-card">
+            <div class="info-item">
+                <span class="label">貸主:</span>
+                <span class="value"><?= htmlspecialchars($debt['lender_name']) ?></span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">借主:</span>
+                <span class="value"><?= htmlspecialchars($name) ?></span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">メール:</span>
+                <span class="value"><?= htmlspecialchars($email) ?></span>
+            </div>
+
+            <div class="info-item" style="font-size: 18px; margin-top: 15px; margin-bottom: 0;">
+                <span class="label" style="font-weight: 600; color: #000;">金額:</span>
+                <span class="value" style="font-weight: 600; color: #000;">
+                    ¥<?= number_format($debt['money']) ?>
+                </span>
+            </div>
+
+            <div class="info-item" style="margin-top: 10px;">
+                <span class="label">返済期限:</span>
+                <span class="value"><?= htmlspecialchars($debt['date']) ?></span>
+            </div>
+
+            <?= $image_html ?>
+        </div>
+
+        <form id="approveForm" method="POST" action="verify_confirm.php">
+            <input type="hidden" name="token" value="<?= htmlspecialchars($verified_token) ?>">
+            <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
+            <button type="button" class="button" onclick="openApprovalModal()">承認する</button>
+        </form>
+    </div>
+
+    <div id="approvalModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>承認の確認</h3>
+            <p>この内容で間違いありませんか？承認すると、貸付が正式に登録されます。</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-approve" onclick="submitApproval()">承認する</button>
+                <button type="button" class="btn-cancel" onclick="closeApprovalModal()">キャンセル</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
