@@ -152,7 +152,6 @@ if (!$error_message) {
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            width: 450px;
             max-width: 90%;
         }
         .success-icon {
@@ -248,4 +247,5 @@ if (!$error_message) {
 </body>
 
 </html>
+
 
