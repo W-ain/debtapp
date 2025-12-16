@@ -89,6 +89,10 @@ $debtor_name  = $_POST['partner_name'] ?? '';
 $debtor_email = $_POST['partner_email'] ?? '';
 $money        = $_POST['amount'] ?? 0;
 $date         = $_POST['due_date'] ?? '';
+// リマインダー設定の取得
+// 何も選択されていない場合は空文字にする
+$remind_settings_arr = $_POST['remind_settings'] ?? [];
+$remind_settings_str = implode(',', $remind_settings_arr);
 
 if (!$creditor_id || !$debtor_name || !$debtor_email || $money <= 0 || !$date) {
     exit("<script>
@@ -201,13 +205,14 @@ try {
             title,
             money,
             date,
+            remind_settings, -- ★追加
             verified,
             status,
             debt_hash,
             token,
             proof_image_path,
             proof_audio_path
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'active', ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 'active', ?, ?, ?, ?)
     ";
 
     $stmt = $pdo->prepare($sql);
@@ -219,6 +224,7 @@ try {
         $title,
         $money,
         $date,
+        $remind_settings_str, // ★追加
         $debt_hash,
         $token,
         $proof_image_path,
@@ -401,6 +407,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
