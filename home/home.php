@@ -69,7 +69,12 @@ try {
   $stmt->execute([$user_id]);
   $debts = $stmt->fetchAll();
 } catch (PDOException $e) {
-  exit("Database query failed: " . $e->getMessage());
+  // exit("Database query failed: " . $e->getMessage());
+  error_log("データ取得中にエラーが発生しました: " . $e->getMessage());
+  exit("<script>
+        alert('データ取得中にエラーが発生しました\\n\\n少し時間をおいて再度お試しください。');
+        window.location.href = '/login/login.html';
+  </script>");
 }
 
 // 2. 承認待ちデータ取得（verified = 0 のもの）
@@ -289,6 +294,7 @@ try {
 
 
 </html>
+
 
 
 
