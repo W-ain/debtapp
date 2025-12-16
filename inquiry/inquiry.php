@@ -104,7 +104,13 @@ try {
     });
 
 } catch (PDOException $e) {
-    exit("データベースエラーが発生しました: " . $e->getMessage());
+    error_log("データベースエラーが発生しました。エラー内容: " . $e->getMessage());
+    exit("
+        <script>
+            alert('データベースエラーが発生しました。\\n\\n少し時間をおいて再度お試しください。');
+            window.location.href = '/home/home.php';
+        </script>
+    ");
 }
 ?>
 <!DOCTYPE html>
@@ -394,4 +400,5 @@ try {
 
 
 </html>
+
 
