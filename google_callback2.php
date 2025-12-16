@@ -282,6 +282,53 @@ if ($proof_image_path_db) {
             gap: 10px;
         }
 
+        .modal-content h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-approve {
+            background: #4CAF50; /* 緑 */
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #45a049;
+        }
+        
+        .btn-cancel {
+            background: #e0e0e0; /* グレー */
+            color: #333;
+        }
+        
+        .btn-cancel:hover {
+            background: #ccc;
+        }
+
+
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to   { opacity: 1; transform: scale(1); }
@@ -343,4 +390,5 @@ if ($proof_image_path_db) {
     </div>
 </body>
 </html>
+
 
