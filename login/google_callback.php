@@ -9,7 +9,7 @@ if (!isset($_GET['code'])) {
     exit("
         <script>
             alert('ログイン処理が中断されました。\\n\\n再度ログインしてください。');
-            window.location.href = '/debtapp/login/google_login.html';
+            window.location.href = '/login/google_login.html';
         </script>
     ");
 }
@@ -39,7 +39,7 @@ if (!isset($token['access_token'])) {
     exit("
         <script>
             alert('システムエラーにより、Googleログインが完了しませんでした。\\n\\n少し時間をおいて再度お試しください。');
-            window.location.href = '/debtapp/login/google_login.html';
+            window.location.href = '/login/google_login.html';
         </script>
     ");
 }
@@ -82,5 +82,6 @@ $_SESSION['name']    = $name;
 header("Location: /home/home.php");
 
 exit;
+
 
 
