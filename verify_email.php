@@ -171,6 +171,18 @@ $authUrl = $client->createAuthUrl();
 </head>
 
 <body>
+
+<?php if (isset($_SESSION['email_mismatch'])): ?>
+<script>
+    const registeredEmail = <?= json_encode($_SESSION['registered_email']) ?>;
+    const authenticatedEmail = <?= json_encode($_SESSION['authenticated_email']) ?>;
+    alert('認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。\n\n登録されたメールアドレス: ' + registeredEmail + '\n認証されたメールアドレス: ' + authenticatedEmail + '\n\n正しいアカウントで再ログインしてください');
+</script>
+<?php 
+unset($_SESSION['email_mismatch'], $_SESSION['registered_email'], $_SESSION['authenticated_email']); 
+?>
+<?php endif; ?>
+    
     <div class="card">
         <h2>貸付内容の確認</h2>
 
@@ -210,3 +222,4 @@ $authUrl = $client->createAuthUrl();
     </div>
 </body>
 </html>
+
