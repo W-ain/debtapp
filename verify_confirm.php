@@ -137,71 +137,91 @@ if (!$error_message) {
     <meta charset="UTF-8">
     <title>貸付承認完了</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background: #eef3ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
+    body {
+        font-family: sans-serif;
+        background: #eef3ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        text-align: center;
+        /* 追加: モバイルでの強制縮小を防ぐ */
+        padding: 20px; 
+        box-sizing: border-box; /* 全要素に適用されているはずだが、念のため */
+    }
+    .card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        
+        /* 修正: 固定幅を外し、最大幅を400pxに設定 */
+        width: 100%; /* 親要素（body）に対して100%幅 */
+        max-width: 400px; /* PC/タブレットでの最大サイズを設定 */
+        
+        box-sizing: border-box; /* paddingを含めて幅を計算 */
+    }
+    .success-icon {
+        color: #4CAF50;
+        font-size: 80px;
+        margin-bottom: 15px;
+    }
+    .error-icon {
+        color: #F44336;
+        font-size: 80px;
+        margin-bottom: 15px;
+    }
+    h2 { 
+        margin-top: 0;
+        color: #333;
+        font-size: 24px;
+    }
+    p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+    .details {
+        background: #f8faff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: left;
+    }
+    .details strong {
+        display: inline-block;
+        width: 100px;
+        font-weight: bold;
+    }
+    .error-box {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 20px;
+        text-align: left;
+        border: 1px solid #ef9a9a;
+    }
+    .note { 
+        font-size: 0.9em; 
+        color: #888; 
+        margin-top: 20px; 
+    }
+    /* モバイルでの詳細リストを見やすく調整 */
+    @media (max-width: 480px) {
         .card {
-            background: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            max-width: 90%;
-        }
-        .success-icon {
-            color: #4CAF50;
-            font-size: 80px;
-            margin-bottom: 15px;
-        }
-        .error-icon {
-            color: #F44336;
-            font-size: 80px;
-            margin-bottom: 15px;
-        }
-        h2 { 
-            margin-top: 0;
-            color: #333;
-            font-size: 24px;
-        }
-        p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .details {
-            background: #f8faff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: left;
+            padding: 25px 20px; /* スマホではパディングを少し減らす */
         }
         .details strong {
-            display: inline-block;
-            width: 100px;
-            font-weight: bold;
+             width: 80px; /* ラベル幅を少し減らす */
         }
-        .error-box {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 20px;
-            text-align: left;
-            border: 1px solid #ef9a9a;
+        .details p {
+             margin-bottom: 5px; /* 行間を詰める */
         }
-        .note {	
-            font-size: 0.9em;	
-            color: #888;	
-            margin-top: 20px;	
-        }
-    </style>
+    }
+</style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
@@ -247,5 +267,6 @@ if (!$error_message) {
 </body>
 
 </html>
+
 
 
