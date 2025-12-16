@@ -47,7 +47,12 @@ if (!$verified_token || !$auth_code) {
     // 処理が完了したらセッションのキーをクリアしておく（安全のため）
     unset($_SESSION['verification_token']);
     unset($_SESSION['google_auth_code']);
-    exit('エラー: 認証情報が不足しています。最初からやり直してください。');
+    exit("
+        <script>
+            alert('エラー: 認証情報が不足しています。\\n最初からやり直してください。');
+            window.close();  
+        </script>
+    ");
 }
 
 // セッションから認証コードを使ってアクセストークンを取得
@@ -56,7 +61,13 @@ if (isset($tokenData['error'])) {
     // エラー時はセッションをクリア
     unset($_SESSION['verification_token']);
     unset($_SESSION['google_auth_code']);
-    exit('Google認証エラー: ' . htmlspecialchars($tokenData['error']));
+    error_log('Google認証エラー: ' . htmlspecialchars($tokenData['error']));
+    exit("
+        <script>
+            alert('Google認証に失敗しました。\\nもう一度お試しください。');
+            window.location.href = '/debtapp/verify_email.php';
+        </script>
+    ");
 }
 
 $client->setAccessToken($tokenData['access_token']);
@@ -83,14 +94,34 @@ try {
     $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$debt) {
-        exit("該当する貸付情報が見つかりません。");
+        exit("
+            <script>
+                alert('該当する貸付情報が見つかりません。\\n\\nすでに承認済み、または無効なリンクです。\\n貸主に確認してください。');
+                window.close();
+            </script>
+        ");
     }
 
     if ($debt['debtor_email'] !== $email) {
-        exit("認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。");
+        // exit("認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。");
+        // セッションにエラー情報を保存
+        $_SESSION['verification_token'] = $verified_token; // トークンを再セット
+        $_SESSION['email_mismatch'] = true;
+        $_SESSION['registered_email'] = $debt['debtor_email'];
+        $_SESSION['authenticated_email'] = $email;
+    
+        // 認証ページに戻す（Google認証からやり直し）
+        header("Location: /debtapp/verify_email.php");
+        exit;
     }
 } catch (PDOException $e) {
-    exit("DBエラー: " . $e->getMessage());
+    error_log("DBエラー: " . $e->getMessage());  // サーバーログに記録
+    exit("
+        <script>
+            alert('システムエラーが発生しました。\\n\\n少し時間をおいて再度お試しください。\\n改善しない場合は貸主に連絡してください。');
+            history.back();
+        </script>
+    ");
 }
 
 // ===================================================================
@@ -312,3 +343,4 @@ if ($proof_image_path_db) {
     </div>
 </body>
 </html>
+
