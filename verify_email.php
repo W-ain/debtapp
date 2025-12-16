@@ -29,7 +29,6 @@ $token = $_SESSION['verification_token'] ?? null;
 
 if (!$token) {
     // リダイレクト後、セッションにトークンがない場合はエラー
-    // exit("エラー: 認証情報が不足しています。リンクが不正か、セッションが切れました。");
     exit("
         <script>
             alert('エラー: 認証情報が不足しています。リンクが不正か、セッションが切れました。\\n\\nメールのリンクから再度お試しください。');
@@ -40,16 +39,16 @@ if (!$token) {
 
 try {
     // 貸付情報 + 貸主名を取得
-    $sql = "SELECT d.*, u.user_name AS lender_name 
+    $sql = "SELECT d.*, u.user_name AS lender_name, u2.user_name AS debtor_name
              FROM debts d
              JOIN users u ON d.creditor_id = u.user_id 
+             JOIN users u2 ON d.debtor_id = u2.user_id 
              WHERE d.token = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$token]);
     $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$debt) {
-        // exit("無効なトークンです。");
         exit("
             <script>
                 alert('無効なトークンです。\\n\\nすでに承認済み、または期限切れの可能性があります。\\n貸主に確認してください。');
@@ -58,7 +57,6 @@ try {
         ");
     }
 } catch (PDOException $e) {
-    // exit("DBエラー: " . $e->getMessage());
     error_log("DBエラー: " . $e->getMessage());
     exit("
         <script>
@@ -84,13 +82,13 @@ $authUrl = $client->createAuthUrl();
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <title>貸付確認ページ</title>
 <style>
 /* ★修正: スマホで見やすくするためのスタイル調整 */
 * {
     box-sizing: border-box; /* 幅の計算を楽にする設定 */
 }
-/* スタイルは省略 */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     background: #f7f9fc;
@@ -104,14 +102,12 @@ body {
 
 .card {
     background: #ffffff;
-    /* padding: 30px 40px; */
     padding: 30px 20px; /* スマホ用に左右の余白を少し減らす */
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    /* width: 420px;  */
-    /* 幅の固定をやめて、最大幅を指定する */
+    
     width: 100%;
-    max-width: 420px;
+    max-width: 420px; /* PCでの最大幅を維持 */
     text-align: center;
 }
 
@@ -142,16 +138,12 @@ h2 {
 .label {
     font-weight: 500;
     color: #333;
-    /* width: 100px;
-    flex-shrink: 0; */
-    /* 固定幅をやめて、最低限の幅を確保 */
-    min-width: 80px; 
+    min-width: 80px; /* 最低限の幅を確保 */
     margin-right: 10px;
 }
 
 .value {
     font-weight: 400;
-    /* flex-grow: 1; */
     text-align: right; /* スマホで見やすいよう右寄せに */
     word-break: break-all; /* 長いメールアドレスなどがはみ出ないように改行 */
 }
@@ -160,10 +152,9 @@ h2 {
 .button {
     display: block;
     width: 100%;
-    background: #4285f4; 
+    background: #4285f4;  
     color: white;
     text-align: center;
-    /* padding: 14px 18px; */
     padding: 14px 0; /* 左右パディングを消して中央揃えを確実に */
     border-radius: 8px;
     font-weight: bold;
@@ -172,13 +163,25 @@ h2 {
     text-decoration: none;
     cursor: pointer;
     transition: background 0.3s;
-    /* box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto; */
 }
 
 .button:hover {
     background: #3c78d8;
+}
+
+/* ★追加: モバイルでの金額表示の調整 */
+@media (max-width: 480px) {
+    .info-item {
+        margin-bottom: 8px;
+    }
+    .info-item .label, .info-item .value {
+        font-size: 14px;
+    }
+    /* 金額行は大きく維持 */
+    .info-item[style*="font-size: 18px"] .label, 
+    .info-item[style*="font-size: 18px"] .value {
+        font-size: 18px !important;
+    }
 }
 
 </style>
@@ -211,5 +214,3 @@ h2 {
 </body>
 
 </html>
-
-
