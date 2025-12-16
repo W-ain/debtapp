@@ -9,7 +9,10 @@ $user_email = $_SESSION['email'] ?? null;
 $debt_id = $_SESSION['view_debt_id'] ?? null;
 
 if (!$user_id || !$debt_id) {
-    exit('エラー: 必要な情報が不足しています。<a href="/inquiry/inquiry.php">inquiry.php</a>から再度アクセスしてください。');
+    exit("<script>
+        alert('エラー: 必要な情報が不足しています。\\n\\nもう一度お試しください。');
+        window.location.href = '/inquiry/inquiry.php';
+    </script>");
 }
 
 try {
@@ -36,7 +39,10 @@ try {
     $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$debt) {
-        exit('エラー: 該当する貸付が見つからないか、アクセス権がありません。');
+        exit("<script>
+            alert('エラー: 該当する貸付が見つからないか、アクセス権がありません。\\n\\nもう一度お試しください。');
+            window.location.href = '/inquiry/inquiry.php';
+        </script>");
     }
 
     $remaining_amount = $debt['money'] - $debt['total_repaid_amount'];
@@ -74,7 +80,13 @@ try {
     }
 
 } catch (PDOException $e) {
-    exit("DBエラー: " . $e->getMessage());
+    error_log("DBエラー: " . $e->getMessage());
+    exit("
+        <script>
+            alert('データベースエラーが発生しました。\\n少し時間をおいて再度お試しください。');
+            window.location.href = '/inquiry/inquiry.php';
+        </script>
+    ");
 }
 ?>
 
@@ -130,4 +142,5 @@ try {
 
 
 </html>
+
 
