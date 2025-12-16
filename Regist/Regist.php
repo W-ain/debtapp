@@ -357,6 +357,28 @@ try {
       background: #ccc;
       color: #333;
     }
+
+    .reminder-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .checkbox-label {
+      padding: 8px 12px;
+      background: #f0f4ff;
+      border: 1px solid #d0d9ff;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .checkbox-label input { margin-right: 5px; }
+    /* 期限切れ（延滞）用は少し色を変える */
+    .checkbox-label.overdue {
+      background: #fff0f0;
+      border-color: #ffd0d0;
+    }
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -394,7 +416,34 @@ try {
       <input type="file" id="camera-capture" name="proof_camera" accept="image/*" capture="camera"
         style="display:none;">
       <input type="file" id="file-select" name="proof_file" accept="image/*" style="display:none;">
+      <div style="margin-top: 20px;">
+          <label style="font-weight: bold; display: block; margin-bottom: 8px;">自動リマインダー通知設定</label>
+          　　<div class="reminder-options">
+                  <label class="checkbox-label">
+                      <input type="checkbox" name="remind_settings[]" value="-3">
+                      <span>3日前</span>
+                  </label>
+                  <label class="checkbox-label">
+                      <input type="checkbox" name="remind_settings[]" value="-1" checked>
+                      <span>前日</span>
+                  </label>
 
+                  <label class="checkbox-label">
+                      <input type="checkbox" name="remind_settings[]" value="0" checked>
+                      <span>当日</span>
+                  </label>
+
+                  <label class="checkbox-label overdue">
+                      <input type="checkbox" name="remind_settings[]" value="1" checked>
+                      <span>翌日(延滞)</span>
+                  </label>
+                  <label class="checkbox-label overdue">
+                      <input type="checkbox" name="remind_settings[]" value="7">
+                    <span>1週間後</span>
+              　　</label>
+          　　</div>
+      　　<small style="color: #666; font-size: 12px;">※チェックを入れたタイミングで自動メールが送信されます。</small>
+      </div>
       <label>証拠資料 (オプション)</label>
 
       <div class="icon-btn-container">
@@ -448,5 +497,6 @@ try {
   </script>
 
 </body>
+
 
 </html>
