@@ -29,7 +29,13 @@ $token = $_SESSION['verification_token'] ?? null;
 
 if (!$token) {
     // リダイレクト後、セッションにトークンがない場合はエラー
-    exit("エラー: 認証情報が不足しています。リンクが不正か、セッションが切れました。");
+    // exit("エラー: 認証情報が不足しています。リンクが不正か、セッションが切れました。");
+    exit("
+        <script>
+            alert('エラー: 認証情報が不足しています。リンクが不正か、セッションが切れました。\\n\\nメールのリンクから再度お試しください。');
+            window.close();  
+        </script>
+    ");
 }
 
 try {
@@ -43,10 +49,23 @@ try {
     $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$debt) {
-        exit("無効なトークンです。");
+        // exit("無効なトークンです。");
+        exit("
+            <script>
+                alert('無効なトークンです。\\n\\nすでに承認済み、または期限切れの可能性があります。\\n貸主に確認してください。');
+                window.close();  
+            </script>
+        ");
     }
 } catch (PDOException $e) {
-    exit("DBエラー: " . $e->getMessage());
+    // exit("DBエラー: " . $e->getMessage());
+    error_log("DBエラー: " . $e->getMessage());
+    exit("
+        <script>
+            alert('システムエラーが発生しました。\\n\\n少し時間をおいて再度お試しください。');
+            window.close();
+        </script>
+    ");
 }
 
 // Google OAuth 設定 (変更なし)
@@ -192,4 +211,5 @@ h2 {
 </body>
 
 </html>
+
 
