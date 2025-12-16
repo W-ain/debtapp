@@ -40,11 +40,9 @@ try {
     $sql = "
         SELECT
             d.*,
-            u.user_name  AS lender_name,
-            u2.user_name AS debtor_name
+            u.user_name AS lender_name
         FROM debts d
-        JOIN users u  ON d.creditor_id = u.user_id
-        JOIN users u2 ON d.debtor_id   = u2.user_id
+        JOIN users u ON d.creditor_id = u.user_id
         WHERE d.token = ?
     ";
     $stmt = $pdo->prepare($sql);
@@ -85,7 +83,6 @@ $authUrl = $client->createAuthUrl();
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付確認ページ</title>
 
     <style>
@@ -169,22 +166,6 @@ $authUrl = $client->createAuthUrl();
 
         .button:hover {
             background: #3c78d8;
-        }
-
-        @media (max-width: 480px) {
-            .info-item {
-                margin-bottom: 8px;
-            }
-
-            .info-item .label,
-            .info-item .value {
-                font-size: 14px;
-            }
-
-            .info-item[style*="font-size: 18px"] .label,
-            .info-item[style*="font-size: 18px"] .value {
-                font-size: 18px !important;
-            }
         }
     </style>
 </head>
