@@ -150,6 +150,7 @@ if ($proof_image_path_db) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付確認ページ</title>
 
     <script>
@@ -390,5 +391,6 @@ if ($proof_image_path_db) {
     </div>
 </body>
 </html>
+
 
 
