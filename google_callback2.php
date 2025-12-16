@@ -155,7 +155,6 @@ if ($proof_image_path_db) {
         padding: 30px 40px;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        width: 420px; 
         text-align: center;
     }
 
@@ -350,3 +349,4 @@ if ($proof_image_path_db) {
 
 </body>
 </html>
+
