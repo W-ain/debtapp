@@ -141,6 +141,7 @@ if (!$error_message) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付承認完了</title>
 
     <style>
@@ -272,3 +273,4 @@ if (!$error_message) {
     </div>
 </body>
 </html>
+
