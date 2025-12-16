@@ -91,7 +91,10 @@ $money        = $_POST['amount'] ?? 0;
 $date         = $_POST['due_date'] ?? '';
 
 if (!$creditor_id || !$debtor_name || !$debtor_email || $money <= 0 || !$date) {
-    exit("エラー: 必要な情報が不足しているか、金額が不正です。");
+    exit("<script>
+        alert('エラー: 必要な情報が不足しています。\\n\\nもう一度お試しください。');
+        window.location.href = '/login/login.html';
+    </script>");
 }
 
 $proof_image_path = null;
@@ -121,7 +124,10 @@ if ($upload_file) {
 
         if (!is_dir($dynamic_dir)) {
             if (!mkdir($dynamic_dir, 0755, true)) {
-                exit("エラー: アップロードディレクトリの作成に失敗しました。");
+                exit("<script>
+                    alert('エラー: アップロードディレクトリの作成に失敗しました。\\n\\n時間をおいて再度お試しください。');
+                    window.location.href = '/home/home.html';
+                </script>");
             }
         }
 
@@ -219,8 +225,13 @@ try {
         $proof_audio_path
     ]);
 } catch (PDOException $e) {
-    exit("DB実行エラー: " . $e->getMessage());
-}
+    error_log("DB実行エラー: " . $e->getMessage());
+    exit("
+        <script>
+            alert('データベースエラーが発生しました。\\n少し時間をおいて再度お試しください。');
+            window.location.href = '/home/home.php';
+        </script>
+    ");}
 
 // -------------------------------------------------------------------
 // メール送信 (変更なし)
@@ -390,6 +401,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
