@@ -441,8 +441,8 @@ try {
                       <input type="checkbox" name="remind_settings[]" value="7">
                     <span>1週間後</span>
               　　</label>
+                  <small style="color: #666; font-size: 12px;">※チェックを入れたタイミングで自動メールが送信されます。</small>
           　　</div>
-      　　<small style="color: #666; font-size: 12px;">※チェックを入れたタイミングで自動メールが送信されます。</small>
       </div>
       <label>証拠資料 (オプション)</label>
 
@@ -500,3 +500,4 @@ try {
 
 
 </html>
+
