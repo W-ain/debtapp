@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'vendor/autoload.php';
-require_once 'config.php'; 
+require_once 'config.php'; 
 
 use Google\Client;
 use Google\Service\Oauth2;
@@ -10,30 +10,30 @@ use Google\Service\Oauth2;
 $client = new Client();
 $client->setClientId('887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
+$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
 
 $url_has_token = isset($_GET['token']);
 $url_has_code = isset($_GET['code']);
 
 if ($url_has_token && !$url_has_code) {
-    $verified_token = $_GET['token'];
-    
-    // トークンをセッションに一時保存
-    $_SESSION['verification_token'] = $verified_token; 
-    
-    // トークンをセッションに保存した後、Google認証を開始する
-    $auth_url = $client->createAuthUrl(['email', 'profile']);
-    header("Location: " . $auth_url);
-    exit;
+    $verified_token = $_GET['token'];
+    
+    // トークンをセッションに一時保存
+    $_SESSION['verification_token'] = $verified_token; 
+    
+    // トークンをセッションに保存した後、Google認証を開始する
+    $auth_url = $client->createAuthUrl(['email', 'profile']);
+    header("Location: " . $auth_url);
+    exit;
 }
 
 if ($url_has_code) {
-    // codeをセッションに一時保存
-    $_SESSION['google_auth_code'] = $_GET['code'];
-    
-    // クリーンなURL（クエリなし）にリダイレクトし、ブラウザのURLからcodeを削除
-    header('Location: https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php');
-    exit;
+    // codeをセッションに一時保存
+    $_SESSION['google_auth_code'] = $_GET['code'];
+    
+    // クリーンなURL（クエリなし）にリダイレクトし、ブラウザのURLからcodeを削除
+    header('Location: https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php');
+    exit;
 }
 
 
@@ -45,19 +45,19 @@ $auth_code = $_SESSION['google_auth_code'] ?? null;
 
 // トークンもコードもなければエラー
 if (!$verified_token || !$auth_code) {
-    // 処理が完了したらセッションのキーをクリアしておく（安全のため）
-    unset($_SESSION['verification_token']);
-    unset($_SESSION['google_auth_code']);
-    exit('エラー: 認証情報が不足しています。最初からやり直してください。');
+    // 処理が完了したらセッションのキーをクリアしておく（安全のため）
+    unset($_SESSION['verification_token']);
+    unset($_SESSION['google_auth_code']);
+    exit('エラー: 認証情報が不足しています。最初からやり直してください。');
 }
 
 // セッションから認証コードを使ってアクセストークンを取得
 $tokenData = $client->fetchAccessTokenWithAuthCode($auth_code);
 if (isset($tokenData['error'])) {
-    // エラー時はセッションをクリア
-    unset($_SESSION['verification_token']);
-    unset($_SESSION['google_auth_code']);
-    exit('Google認証エラー: ' . htmlspecialchars($tokenData['error']));
+    // エラー時はセッションをクリア
+    unset($_SESSION['verification_token']);
+    unset($_SESSION['google_auth_code']);
+    exit('Google認証エラー: ' . htmlspecialchars($tokenData['error']));
 }
 
 $client->setAccessToken($tokenData['access_token']);
@@ -68,32 +68,32 @@ $name = $userInfo->name;
 
 // 処理が完了したのでセッションをクリア
 unset($_SESSION['verification_token']);
-unset($_SESSION['google_auth_code']); 
+unset($_SESSION['google_auth_code']); 
 
 
 // ----------------------------------------------------------------------
 // DB接続と確認 (ここから元の処理)
 // ----------------------------------------------------------------------
 try {
-    $stmt = $pdo->prepare("
-        SELECT d.*, u.user_name AS lender_name
-        FROM debts d 
-        JOIN users u ON d.creditor_id = u.user_id 
-        WHERE d.token = ?
-    ");
-    $stmt->execute([$verified_token]);
-    $debt = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("
+        SELECT d.*, u.user_name AS lender_name
+        FROM debts d 
+        JOIN users u ON d.creditor_id = u.user_id 
+        WHERE d.token = ?
+    ");
+    $stmt->execute([$verified_token]);
+    $debt = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$debt) {
-        exit("該当する貸付情報が見つかりません。");
-    }
-    
-    if ($debt['debtor_email'] !== $email) {
-        exit("認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。");
-    }
+    if (!$debt) {
+        exit("該当する貸付情報が見つかりません。");
+    }
+    
+    if ($debt['debtor_email'] !== $email) {
+        exit("認証されたGoogleアカウントのメールアドレスが、貸付情報に登録されたメールアドレスと一致しません。");
+    }
 
 } catch (PDOException $e) {
-    exit("DBエラー: " . $e->getMessage());
+    exit("DBエラー: " . $e->getMessage());
 }
 
 // ===================================================================
@@ -103,18 +103,18 @@ $image_html = '';
 $proof_image_path_db = $debt['proof_image_path'] ?? null;
 
 if ($proof_image_path_db) {
-    // DBに保存されているパス（例: ../uploads/proofs/...）から、
-    // HTMLのsrc属性として正しいパス（例: uploads/proofs/...）に調整
-    $image_src = str_replace('../', '', $proof_image_path_db);
+    // DBに保存されているパス（例: ../uploads/proofs/...）から、
+    // HTMLのsrc属性として正しいパス（例: uploads/proofs/...）に調整
+    $image_src = str_replace('../', '', $proof_image_path_db);
 
-    $image_html = '
-        <div class="info-item image-item">
-            <span class="label">証拠画像:</span>
-            <div class="proof-image-wrapper">
-                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
-            </div>
-        </div>
-    ';
+    $image_html = '
+        <div class="info-item image-item">
+            <span class="label">証拠画像:</span>
+            <div class="proof-image-wrapper">
+                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
+            </div>
+        </div>
+    ';
 }
 // ===================================================================
 ?>
@@ -122,257 +122,230 @@ if ($proof_image_path_db) {
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>貸付確認ページ</title>
-    <script>
-    function openApprovalModal() {
-        document.getElementById('approvalModal').style.display = 'flex';
-    }
+    <meta charset="UTF-8">
+    <title>貸付確認ページ</title>
+    <script>
+    function openApprovalModal() {
+        document.getElementById('approvalModal').style.display = 'flex';
+    }
 
-    function closeApprovalModal() {
-        document.getElementById('approvalModal').style.display = 'none';
-    }
+    function closeApprovalModal() {
+        document.getElementById('approvalModal').style.display = 'none';
+    }
 
-    function submitApproval() {
-        closeApprovalModal();
-        // 承認フォームを送信
-        document.getElementById("approveForm").submit();
-    }
-    </script>
-    <style>
-/* ----------------------------------------------------------------------
- * モバイル最適化修正済みスタイル
- * ---------------------------------------------------------------------- */
-/* すべての要素でpadding, borderを幅に含める */
-* {
-    box-sizing: border-box; 
-}
+    function submitApproval() {
+        closeApprovalModal();
+        // 承認フォームを送信
+        document.getElementById("approveForm").submit();
+    }
+    </script>
+    <style>
+    body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background: #f7f9fc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
 
-body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background: #f7f9fc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    /* 追加: body全体にパディングを入れて、カードが端に張り付くのを防ぐ */
-    padding: 20px; 
-}
+    .card {
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
 
-.card {
-    background: #ffffff;
-    /* 修正: 左右のパディングをスマホ用に調整 (40px -> 20px) */
-    padding: 30px 20px; 
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    
-    /* 修正: 幅を100%にし、最大幅を420pxに設定 */
-    width: 100%;
-    max-width: 420px; 
-    
-    text-align: center;
-}
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
 
-h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 30px;
-    font-weight: 600;
-}
+    .info-card {
+        background: #f4f6fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        text-align: left;
+        font-size: 15px;
+    }
 
-.info-card {
-    background: #f4f6fa;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    text-align: left;
-    font-size: 15px;
-}
+    .info-item {
+        display: flex;
+        margin-bottom: 12px;
+        color: #555;
+    }
 
-.info-item {
-    display: flex;
-    /* 修正: 要素を左右に広げる */
-    justify-content: space-between; 
-    margin-bottom: 12px;
-    color: #555;
-    align-items: center; /* 縦方向中央寄せ */
-}
+    .label {
+        font-weight: 500;
+        color: #333;
+        width: 100px;
+        flex-shrink: 0;
+    }
 
-.label {
-    font-weight: 500;
-    color: #333;
-    /* 修正: 固定幅から最低幅に変更し、値が長くなった時に柔軟に対応 */
-    min-width: 80px; 
-    flex-shrink: 0;
-    margin-right: 10px;
-}
+    .value {
+        font-weight: 400;
+        flex-grow: 1;
+    }
 
-.value {
-    font-weight: 400;
-    flex-grow: 1;
-    text-align: right; /* 修正: 値を右寄せにし、スマホで見やすく */
-    word-break: break-word; /* 長いURLやメールアドレスがはみ出るのを防ぐ */
-}
+    .proof-image-wrapper {
+        margin-top: 10px;
+        text-align: center;
+        width: 100%;
+    }
 
-.proof-image-wrapper {
-    margin-top: 10px;
-    text-align: center;
-    /* width: 100%; <- この設定は不要（親要素info-card内で中央寄せなら） */
-}
+    .proof-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-.proof-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+    .button {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #5b7cff, #6af1ff);
+        color: white;
+        text-align: center;
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 25px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
 
-.button {
-    display: block;
-    width: 100%;
-    background: linear-gradient(135deg, #5b7cff, #6af1ff);
-    color: white;
-    text-align: center;
-    padding: 14px 18px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    margin-top: 25px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+    .button:hover {
+        opacity: 0.9;
+    }
+    
+    /* --- 新規追加: モーダルスタイル --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none; /* 初期状態は非表示 */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
 
-.button:hover {
-    opacity: 0.9;
-}
- 
-/* --- モーダルスタイル (モバイル最適化はほぼ完了しているため軽微な修正のみ) --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px; /* モーダルが端に張り付くのを防ぐ */
-}
+    .modal-content {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 350px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.3s ease-out;
+    }
 
-.modal-content {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    width: 100%; /* 親要素に対して100%に */
-    max-width: 350px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease-out;
-}
+    .modal-content h3 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        color: #333;
+    }
 
-.modal-content h3 {
-    margin-top: 0;
-    font-size: 1.5rem;
-    color: #333;
-}
+    .modal-content p {
+        color: #666;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
 
-.modal-content p {
-    color: #666;
-    margin-bottom: 25px;
-    line-height: 1.6;
-}
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+    }
 
-.modal-actions {
-    display: flex;
-    gap: 10px;
-}
+    .modal-actions button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
 
-.modal-actions button {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
+    .btn-approve {
+        background: #4CAF50; /* 緑 */
+        color: white;
+    }
 
-.btn-approve {
-    background: #4CAF50;
-    color: white;
-}
+    .btn-approve:hover {
+        background: #45a049;
+    }
 
-.btn-approve:hover {
-    background: #45a049;
-}
+    .btn-cancel {
+        background: #e0e0e0;
+        color: #333;
+    }
 
-.btn-cancel {
-    background: #e0e0e0;
-    color: #333;
-}
-
-.btn-cancel:hover {
-    background: #ccc;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-</style>
+    .btn-cancel:hover {
+        background: #ccc;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    </style>
 </head>
 <body>
 <div class="card">
-    <h2>貸付内容の確認</h2>
-    
-    <div class="info-card">
-        <div class="info-item">
-            <span class="label">貸主:</span>
-            <span class="value"><?= htmlspecialchars($debt['lender_name']) ?></span>
-        </div>
-        <div class="info-item">
-            <span class="label">借主:</span>
-            <span class="value"><?= htmlspecialchars($name) ?></span>
-        </div>
-        <div class="info-item">
-            <span class="label">メール:</span>
-            <span class="value"><?= htmlspecialchars($email) ?></span>
-        </div>
-        <div class="info-item" style="font-size: 18px; margin-top: 15px; margin-bottom: 0;">
-            <span class="label" style="font-weight: 600; color: #000;">金額:</span>
-            <span class="value" style="font-weight: 600; color: #000;">¥<?= number_format($debt['money']) ?></span>
-        </div>
-        <div class="info-item" style="margin-top: 10px;">
-            <span class="label">返済期限:</span>
-            <span class="value"><?= htmlspecialchars($debt['date']) ?></span>
-        </div>
+    <h2>貸付内容の確認</h2>
+    
+    <div class="info-card">
+        <div class="info-item">
+            <span class="label">貸主:</span>
+            <span class="value"><?= htmlspecialchars($debt['lender_name']) ?></span>
+        </div>
+        <div class="info-item">
+            <span class="label">借主:</span>
+            <span class="value"><?= htmlspecialchars($name) ?></span>
+        </div>
+        <div class="info-item">
+            <span class="label">メール:</span>
+            <span class="value"><?= htmlspecialchars($email) ?></span>
+        </div>
+        <div class="info-item" style="font-size: 18px; margin-top: 15px; margin-bottom: 0;">
+            <span class="label" style="font-weight: 600; color: #000;">金額:</span>
+            <span class="value" style="font-weight: 600; color: #000;">¥<?= number_format($debt['money']) ?></span>
+        </div>
+        <div class="info-item" style="margin-top: 10px;">
+            <span class="label">返済期限:</span>
+            <span class="value"><?= htmlspecialchars($debt['date']) ?></span>
+        </div>
 
-        <?= $image_html ?>
-    </div>
+        <?= $image_html ?>
+    </div>
 
-    <form id="approveForm" method="POST" action="verify_confirm.php">
-        <input type="hidden" name="token" value="<?= htmlspecialchars($verified_token) ?>">
-        <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
-        <button type="button" class="button" onclick="openApprovalModal()">承認する</button>
-    </form>
+    <form id="approveForm" method="POST" action="verify_confirm.php">
+        <input type="hidden" name="token" value="<?= htmlspecialchars($verified_token) ?>">
+        <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
+        <button type="button" class="button" onclick="openApprovalModal()">承認する</button>
+    </form>
 </div>
 
 <div id="approvalModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>承認の確認</h3>
-        <p>この内容で間違いありませんか？承認すると、貸付が正式に登録されます。</p>
-        <div class="modal-actions">
-            <button type="button" class="btn-approve" onclick="submitApproval()">承認する</button>
-            <button type="button" class="btn-cancel" onclick="closeApprovalModal()">キャンセル</button>
-        </div>
-    </div>
+    <div class="modal-content">
+        <h3>承認の確認</h3>
+        <p>この内容で間違いありませんか？承認すると、貸付が正式に登録されます。</p>
+        <div class="modal-actions">
+            <button type="button" class="btn-approve" onclick="submitApproval()">承認する</button>
+            <button type="button" class="btn-cancel" onclick="closeApprovalModal()">キャンセル</button>
+        </div>
+    </div>
 </div>
 
 </body>
 </html>
-
-
