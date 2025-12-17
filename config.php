@@ -70,12 +70,12 @@ define('DSN', "mysql:unix_socket={$host};dbname={$dbname};charset=utf8mb4");
 // ✉️ メール設定（PHPMailer 用）
 // ================================
 define('MAIL_HOST', 'smtp.gmail.com');
-define('MAIL_USERNAME', 'debtapp005@gmail.com');
-define('MAIL_PASSWORD', 'anbi lvnm cykn vnsd'); // Gmailの「アプリパスワード」
-define('MAIL_FROM', 'debtapp005@gmail.com');
-// define('MAIL_USERNAME', getenv('MAIL_USERNAME')); // 環境変数から取得
-// define('MAIL_PASSWORD', getenv('MAIL_PASSWORD')); 
-// define('MAIL_FROM', getenv('MAIL_FROM'));
+// define('MAIL_USERNAME', 'debtapp005@gmail.com');
+// define('MAIL_PASSWORD', 'anbi lvnm cykn vnsd'); // Gmailの「アプリパスワード」
+// define('MAIL_FROM', 'debtapp005@gmail.com');
+define('MAIL_USERNAME', getenv('MAIL_USERNAME')); // 環境変数から取得
+define('MAIL_PASSWORD', getenv('MAIL_PASSWORD')); 
+define('MAIL_FROM', getenv('MAIL_FROM'));
 define('MAIL_FROM_NAME', 'DebtApp 通知');
 define('MAIL_PORT', 587);
 define('MAIL_ENCRYPTION', 'tls');
@@ -93,6 +93,7 @@ define('GOOGLE_REDIRECT_URI', getenv('GOOGLE_REDIRECT_URI'));
 $google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
+
 
 
 
