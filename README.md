@@ -7,7 +7,6 @@
 Cloud Buildが自動でビルド → Cloud Runにデプロイ
 
 ### 本番環境: https://debtapp-565547399529.asia-northeast1.run.app
-⚠️現在デプロイ中です（ミネヤ/2025_12_09内のsqlファイルとアプリ(.zip)をデプロイ中）
 
 ### ローカルからの変更点
 - ファイル指定URI  
@@ -27,10 +26,3 @@ Cloud Buildが自動でビルド → Cloud Runにデプロイ
 - 認証: Google OAuth 2.0
 - インフラ: Google Cloud Run
 - 自動化: Cloud Scheduler (cron), Cloud Build
-
-#### インフラ構成
-- Cloud Run: PHPアプリケーションのホスティング
-- Cloud SQL: MySQLデータベース
-- Cloud Scheduler: 定期実行タスク（リマインダー、延滞通知）
-- Secret Manager: 機密情報の管理
-- Cloud Build: 自動ビルド&デプロイ
