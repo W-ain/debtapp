@@ -31,10 +31,16 @@ error_reporting(E_ALL);
 // ================================
 // 🗄️ データベース接続設定（本番環境）
 // ================================
-$host = "/cloudsql/moonlit-academy-477401-t5:us-central1:myapp-sql";
-$dbname = "mydb";   // DB名
-$dbuser = "dev_user";   // CloudSQL上のユーザー
-$dbpass = "nv1a_NV1A";  
+    // Cloud Run (Cloud SQL) 用の設定
+    // 値は Cloud Run の環境変数から取得
+// $host = "/cloudsql/moonlit-academy-477401-t5:us-central1:myapp-sql";
+// $dbname = "mydb";   // DB名
+// $dbuser = "dev_user";   // CloudSQL上のユーザー
+// $dbpass = "nv1a_NV1A";  
+$host = getenv('CLOUD_SQL_CONNECTION_NAME');
+$dbname = getenv('DB_NAME');
+$dbuser = getenv('DB_USER');
+$dbpass = getenv('DB_PASS');
 
 try {
     $pdo = new PDO(
@@ -64,9 +70,12 @@ define('DSN', "mysql:unix_socket={$host};dbname={$dbname};charset=utf8mb4");
 // ✉️ メール設定（PHPMailer 用）
 // ================================
 define('MAIL_HOST', 'smtp.gmail.com');
-define('MAIL_USERNAME', 'debtapp005@gmail.com');
-define('MAIL_PASSWORD', 'anbi lvnm cykn vnsd'); // Gmailの「アプリパスワード」
-define('MAIL_FROM', 'debtapp005@gmail.com');
+// define('MAIL_USERNAME', 'debtapp005@gmail.com');
+// define('MAIL_PASSWORD', 'anbi lvnm cykn vnsd'); // Gmailの「アプリパスワード」
+// define('MAIL_FROM', 'debtapp005@gmail.com');
+define('MAIL_USERNAME', getenv('MAIL_USERNAME')); // 環境変数から取得
+define('MAIL_PASSWORD', getenv('MAIL_PASSWORD')); 
+define('MAIL_FROM', getenv('MAIL_FROM'));
 define('MAIL_FROM_NAME', 'DebtApp 通知');
 define('MAIL_PORT', 587);
 define('MAIL_ENCRYPTION', 'tls');
@@ -74,16 +83,17 @@ define('MAIL_ENCRYPTION', 'tls');
 // ================================
 // 🔐 Google OAuth 設定
 // ================================
-define('GOOGLE_CLIENT_ID', '887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
-define('GOOGLE_CLIENT_SECRET', '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');
-// define('GOOGLE_CLIENT_ID', '565547399529-t1evuupa9cl7hsp9b2auuk0dergcmlfu.apps.googleusercontent.com');
-// define('GOOGLE_CLIENT_SECRET', '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');
-// define('GOOGLE_REDIRECT_URI', 'http://localhost/debtapp/login/google_callback.php');
-define('GOOGLE_REDIRECT_URI', 'https://debtapp-565547399529.asia-northeast1.run.app/login/google_callback.php');
+// define('GOOGLE_CLIENT_ID', '887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
+// define('GOOGLE_CLIENT_SECRET', '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');
+// define('GOOGLE_REDIRECT_URI', 'https://debtapp-565547399529.asia-northeast1.run.app/login/google_callback.php');
+define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
+define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET'));
+define('GOOGLE_REDIRECT_URI', getenv('GOOGLE_REDIRECT_URI'));
 // Google API 認証URL
 $google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
+
 
 
 
