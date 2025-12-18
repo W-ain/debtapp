@@ -73,15 +73,16 @@ if (!$user) {
     $user_id = $user['user_id'];
 }
 
-// ✅ ログインセッション作成 (変更なし)
+// ログインセッション作成 (変更なし)
 $_SESSION['user_id'] = $user_id;
 $_SESSION['email']   = $email;
 $_SESSION['name']    = $name;
 
-// ✅ ホーム画面へリダイレクト (変更なし)
+// ホーム画面へリダイレクト (変更なし)
 header("Location: /home/home.php");
 
 exit;
+
 
 
 
