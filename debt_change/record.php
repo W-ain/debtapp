@@ -60,6 +60,7 @@ try {
 
     $tamperClass = "tamper-ok";
     // $tamperMessage = "このデータは改ざんされていません";
+    $tamperMessage = "";
 
     if ($next) {
         $hash_data = [
@@ -117,10 +118,11 @@ try {
                 <span class="label highlight">現在の残り金額</span><span
                     class="value highlight">¥<?= number_format($remaining_amount) ?></span>
             </div>
-
-            <div class="tamper-check <?= $tamperClass ?>">
-                <?= htmlspecialchars($tamperMessage) ?>
-            </div>
+            <?php if (!empty($tamperMessage)): ?>
+                <div class="tamper-check <?= $tamperClass ?>">
+                    <?= htmlspecialchars($tamperMessage) ?>
+                </div>
+            <?php endif; ?>
 
             <?php if ($remaining_amount > 0): ?>
                 <?php if ($is_creditor): ?>
@@ -142,6 +144,7 @@ try {
 
 
 </html>
+
 
 
 
