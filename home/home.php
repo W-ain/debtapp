@@ -143,15 +143,29 @@ try {
 // 3. 貸付データ取得（承認済みリスト）
 // -----------------------------------------------------------
 try {
-  $stmt = $pdo->prepare("
-        SELECT * FROM debts 
-        WHERE creditor_id = ? AND verified = 1
-        ORDER BY date ASC
+    // 返済合計額を計算するサブクエリ
+    $repaid_subquery = "
+        SELECT 
+            debt_id, 
+            SUM(change_money) AS total_repaid_amount
+        FROM debt_change
+        GROUP BY debt_id
+    ";
+
+    // サブクエリをLEFT JOINして取得
+    $stmt = $pdo->prepare("
+        SELECT 
+            d.*, 
+            COALESCE(r.total_repaid_amount, 0) AS total_repaid_amount
+        FROM debts d
+        LEFT JOIN ({$repaid_subquery}) AS r ON d.debt_id = r.debt_id
+        WHERE d.creditor_id = ? AND d.verified = 1
+        ORDER BY d.date ASC
     ");
-  $stmt->execute([$user_id]);
-  $debts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute([$user_id]);
+    $debts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  $debts = [];
+    $debts = [];
 }
 
 // -----------------------------------------------------------
@@ -296,12 +310,18 @@ try {
       <h3>期限が近い貸付</h3>
       <?php if (!empty($debts)): ?>
         <?php foreach ($debts as $debt): ?>
+          <?php
+          // 残高の計算：元の金額 - 返済済み合計
+          $original_money = $debt['money'];
+          $total_repaid = $debt['total_repaid_amount'];
+          $remaining_money = $original_money - $total_repaid;
+          ?>
           <div class="item">
             <div>
               <strong><?= htmlspecialchars($debt['debtor_name']); ?></strong><br>
               <span>📅 <?= htmlspecialchars($debt['date']); ?></span>
             </div>
-            <strong style="color:#4285f4;">¥<?= number_format($debt['money']); ?></strong>
+            <strong style="color:#4285f4;">¥<?= number_format(max(0, $remaining_money)); ?></strong>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
@@ -483,5 +503,6 @@ try {
 
 </body>
 </html>
+
 
 
