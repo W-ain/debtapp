@@ -189,6 +189,7 @@ try {
                 label.style.display = 'flex';
             }
         });
+
         }
 
         // イベントリスナー登録
@@ -229,6 +230,25 @@ try {
           this.value = this.value.replace(/[^0-9]/g, '');
         });
       }
+      // モバイル端末かどうかを判定（PCの場合はカメラ撮影機能なし）
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+          if (!isMobile) {
+            const cameraBtn = document.querySelector('.modal-btn[onclick*="triggerCamera"]');
+            if (cameraBtn) {
+              cameraBtn.style.backgroundColor = '#ccc';
+              cameraBtn.style.color = '#888';
+              cameraBtn.style.cursor = 'not-allowed';
+              cameraBtn.style.opacity = '0.6';
+              cameraBtn.onclick = function(e) {
+                e.preventDefault();
+                alert('カメラ機能はモバイル端末でのみ利用可能です。');
+                return false;
+              };
+              const btnText = cameraBtn.querySelector('span').nextSibling;
+              if (btnText) btnText.textContent = ' カメラを起動 (PC不可)';
+            }
+          }      
     });
   </script>
   <style>
@@ -472,6 +492,12 @@ try {
       background: #fff0f0;
       border-color: #ffd0d0;
     }
+    /* マウス操作ができるデバイス（PCなど）では、カメラボタンを非表示にする */
+    @media (hover: hover) and (pointer: fine) {
+      .modal-btn[onclick*="triggerCamera"] {
+        display: none;
+      }
+    }
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -593,6 +619,7 @@ try {
 
 
 </html>
+
 
 
 
