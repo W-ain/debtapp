@@ -136,6 +136,15 @@ try {
             });
         });
       }
+      // ★★★ 追記：返済期日の最小値を今日に設定 ★★★
+      const dateInput = document.querySelector('input[name="due_date"]');
+      if (dateInput) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInput.min = `${yyyy}-${mm}-${dd}`;
+      }
     });
   </script>
   <style>
@@ -500,4 +509,5 @@ try {
 
 
 </html>
+
 
