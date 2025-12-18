@@ -136,14 +136,12 @@ if ($upload_file) {
         $hash_input = $upload_file['name'] . time() . $creditor_id . microtime();
         $hashed_name = hash('sha256', $hash_input);
         $unique_filename = $hashed_name . '.' . $file_extension;
+        $temp_local_path = '/tmp/' . $unique_filename;
 
         // --- GCSの設定 ---
-        $bucketName = 'あなたのバケット名'; // 先ほど作成したバケット名
+        $bucketName = 'my-debt-app-storage';
         $storage = new StorageClient();
         $bucket = $storage->bucket($bucketName);
-
-        // --- 一時的な保存先（Cloud Runで許可されている場所） ---
-        $temp_local_path = '/tmp/' . $unique_filename;
 
         // リサイズして一旦 /tmp に保存
         if (resize_and_save_image($upload_file['tmp_name'], $temp_local_path, $file_extension, 800, 80)) {
@@ -167,11 +165,6 @@ if ($upload_file) {
             $file_path = $temp_local_path; 
         }
     }
-}
-
-// ... (メール送信処理のあと、不要になった一時ファイルを削除) ...
-if (isset($temp_local_path) && file_exists($temp_local_path)) {
-    unlink($temp_local_path);
 }
 
 // -------------------------------------------------------------------
@@ -280,15 +273,13 @@ try {
     $mail->addAddress($debtor_email, $debtor_name);
 
     $image_html = '';
-    $file_path  = dirname(__DIR__) . '/' . $proof_image_path;
-
-    if ($proof_image_path && file_exists($file_path)) {
-        $mail->addEmbeddedImage($file_path, 'proof_receipt', 'receipt.jpg');
-
+    
+    if ($proof_image_path && isset($temp_local_path) && file_exists($temp_local_path)) {
+        // ✅ ここで /tmp の画像を参照してメールに埋め込む
+        $mail->addEmbeddedImage($temp_local_path, 'proof_receipt', 'receipt.jpg');
         $image_html = '
             <p style="margin-top: 15px;">【レシート画像】</p>
-            <img src="cid:proof_receipt" 
-                style="max-width: 100%; border:1px solid #ddd; border-radius:5px;">
+            <img src="cid:proof_receipt" style="max-width: 100%; border:1px solid #ddd; border-radius:5px;">
         ';
     }
 
@@ -336,6 +327,9 @@ try {
     $redirect_url     = '../home/home.php';
 }
 
+if (isset($temp_local_path) && file_exists($temp_local_path)) {
+    unlink($temp_local_path);
+}
 // -------------------------------------------------------------------
 // 完了モーダル表示とリダイレクト (修正箇所)
 // -------------------------------------------------------------------
@@ -445,16 +439,3 @@ function redirectToHome() {
 <?php
 exit;
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
