@@ -59,7 +59,7 @@ try {
     $next = $stmtNext->fetch(PDO::FETCH_ASSOC);
 
     $tamperClass = "tamper-ok";
-    $tamperMessage = "このデータは改ざんされていません";
+    // $tamperMessage = "このデータは改ざんされていません";
 
     if ($next) {
         $hash_data = [
@@ -142,5 +142,6 @@ try {
 
 
 </html>
+
 
 
