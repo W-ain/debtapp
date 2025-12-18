@@ -39,7 +39,7 @@ try {
       if (form && submitButton) {
         form.addEventListener('submit', function (event) {
           submitButton.disabled = true;
-          submitButton.innerHTML = '処理中...📩 送信中...</span>';
+          submitButton.innerHTML = '処理中... 送信中...</span>';
         });
       }
 
@@ -79,7 +79,7 @@ try {
       fileInput.addEventListener('change', handleFileSelection);
 
       // ---------------------------------------------------------
-      // ★★★ 名前自動入力 & ロック機能 (Ajax通信) ★★★
+      // 名前自動入力 & ロック機能 (Ajax通信) 
       // ---------------------------------------------------------
       const emailInput = document.querySelector('input[name="partner_email"]');
       const nameInput = document.querySelector('input[name="partner_name"]');
@@ -136,7 +136,7 @@ try {
             });
         });
       }
-      // ★★★ 追記：返済期日の最小値を今日に設定 ★★★
+      // 返済期日の最小値を今日に設定 
       const dateInput = document.querySelector('input[name="due_date"]');
       if (dateInput) {
         const today = new Date();
@@ -145,7 +145,7 @@ try {
         const dd = String(today.getDate()).padStart(2, '0');
         dateInput.min = `${yyyy}-${mm}-${dd}`;
       }
-      // ★★★ 追記：金額入力の制限（マイナス・記号の排除） ★★★
+      // 金額入力の制限（マイナス・記号の排除）
       const amountInput = document.querySelector('input[name="amount"]');
       if (amountInput) {
         // UX向上: スマホで数字キーパッドを表示させる（HTML側で設定がない場合用
@@ -527,6 +527,7 @@ try {
 
 
 </html>
+
 
 
 
