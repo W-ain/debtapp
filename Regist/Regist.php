@@ -148,15 +148,19 @@ try {
       // ★★★ 追記：金額入力の制限（マイナス・記号の排除） ★★★
       const amountInput = document.querySelector('input[name="amount"]');
       if (amountInput) {
+        // UX向上: スマホで数字キーパッドを表示させる（HTML側で設定がない場合用
+        amountInput.setAttribute('inputmode', 'numeric');
+        amountInput.setAttribute('pattern', '[0-9]*');
         amountInput.addEventListener('keydown', function(e) {
           // マイナス記号(-) と 指数(e) の入力を無効化
-          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+          if (!/^[0-9]$/.test(e.key)) {
             e.preventDefault();
           }
         });
         // 貼り付けなどで負の数が入った場合もクリアする
         amountInput.addEventListener('input', function() {
-          if (this.value < 0) this.value = '';
+          // 数字以外の文字（[^0-9]）を空文字に置換
+          this.value = this.value.replace(/[^0-9]/g, '');
         });
       }
     });
@@ -523,6 +527,7 @@ try {
 
 
 </html>
+
 
 
 
