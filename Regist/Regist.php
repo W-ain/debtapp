@@ -492,12 +492,6 @@ try {
       background: #fff0f0;
       border-color: #ffd0d0;
     }
-    /* マウス操作ができるデバイス（PCなど）では、カメラボタンを非表示にする */
-    @media (hover: hover) and (pointer: fine) {
-      .modal-btn[onclick*="triggerCamera"] {
-        display: none;
-      }
-    }
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -619,6 +613,7 @@ try {
 
 
 </html>
+
 
 
 
