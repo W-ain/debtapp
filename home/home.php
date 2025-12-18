@@ -46,7 +46,7 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
     $mail->SMTPSecure = 'tls';
     $mail->Port       = 587;
 
-    $mail->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
+    $mail->setFrom('debtapp005@gmail.com', 'トリタテくん運営チーム');
     $mail->addAddress($email, $debtor_name);
 
     $mail->isHTML(true);
@@ -54,7 +54,7 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
     $mail->Encoding = 'base64';
     
     // ★変更点1: 件名を「再送」に変更
-    $mail->Subject = '【DebtApp】貸付確認のお願い（再送）';
+    $mail->Subject = '【トリタテくん】貸付確認のお願い（再送）';
     
     // ★変更点2: URLを自動検出に変更
     // home.php がある場所の「一つ上の階層」に verify_email.php があると仮定してURLを作ります
@@ -483,3 +483,4 @@ try {
 
 </body>
 </html>
+
