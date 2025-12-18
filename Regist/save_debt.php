@@ -100,6 +100,14 @@ if (!$creditor_id || !$debtor_name || !$debtor_email || $money <= 0 || !$date) {
         window.location.href = '/login/login.html';
     </script>");
 }
+// 過去の日付チェック
+$today = date('Y-m-d');
+if ($date < $today) {
+    exit("<script>
+        alert('エラー: 返済期日に過去の日付は指定できません。');
+        window.history.back();
+    </script>");
+}
 
 $proof_image_path = null;
 $proof_audio_path = null;
@@ -415,6 +423,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
