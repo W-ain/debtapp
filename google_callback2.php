@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'vendor/autoload.php';
-require_once 'config.php'; 
+require_once 'config.php';
 
 use Google\Client;
 use Google\Service\Oauth2;
@@ -10,7 +10,7 @@ use Google\Service\Oauth2;
 $client = new Client();
 $client->setClientId('887906658821-1spgtqg6mu506eslavhjpbntc3hb9bar.apps.googleusercontent.com');
 $client->setClientSecret('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');
-$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php'); 
+$client->setRedirectUri('https://debtapp-565547399529.asia-northeast1.run.app/google_callback2.php');
 
 $url_has_token = isset($_GET['token']);
 $url_has_code  = isset($_GET['code']);
@@ -109,7 +109,7 @@ try {
         $_SESSION['email_mismatch'] = true;
         $_SESSION['registered_email'] = $debt['debtor_email'];
         $_SESSION['authenticated_email'] = $email;
-    
+
         // 認証ページに戻す（Google認証からやり直し）
         header("Location: /debtapp/verify_email.php");
         exit;
@@ -133,21 +133,22 @@ $proof_image_path_db = $debt['proof_image_path'] ?? null;
 $bucketName = 'my-debt-app-storage';
 
 if ($proof_image_path_db) {
-    $image_src = "https://storage.googleapis.com/{$bucketName}/" . $proof_image_path_db;
+    $image_src = "https://storage.googleapis.com/{$bucketName}/" . $proof_image_path_db;
 
-    $image_html = '
-        <div class="info-item image-item">
-            <span class="label">証拠画像:</span>
-            <div class="proof-image-wrapper">
-                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
-            </div>
-        </div>
-    ';
+    $image_html = '
+<div class="info-item image-item">
+ <span class="label">証拠画像:</span>
+ <div class="proof-image-wrapper">
+<img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
+ </div>
+</div>
+ ';
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -312,27 +313,36 @@ if ($proof_image_path_db) {
         }
 
         .btn-approve {
-            background: #4CAF50; /* 緑 */
+            background: #4CAF50;
+            /* 緑 */
             color: white;
         }
-        
+
         .btn-approve:hover {
             background: #45a049;
         }
-        
+
         .btn-cancel {
-            background: #e0e0e0; /* グレー */
+            background: #e0e0e0;
+            /* グレー */
             color: #333;
         }
-        
+
         .btn-cancel:hover {
             background: #ccc;
         }
 
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to   { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -390,8 +400,5 @@ if ($proof_image_path_db) {
         </div>
     </div>
 </body>
+
 </html>
-
-
-
-
