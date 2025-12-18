@@ -34,7 +34,7 @@ class EmailService {
         $this->mail->Port       = 587;
         $this->mail->CharSet    = 'UTF-8';
         $this->mail->Encoding   = 'base64';
-        $this->mail->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
+        $this->mail->setFrom('debtapp005@gmail.com', 'トリタテくん運営チーム');
         $this->mail->isHTML(true);
     }
     
@@ -68,7 +68,7 @@ class EmailService {
             $this->mail->clearAllRecipients();
             $this->mail->addAddress($debt['debtor_email'], $debt['debtor_name']);
             
-            $this->mail->Subject = "【DebtApp】返済期限リマインダー（{$timing_detail}が期限）";
+            $this->mail->Subject = "【トリタテくん】返済期限リマインダー（{$timing_detail}が期限）";
             $this->mail->Body = "
                 <div style='font-family: Arial, sans-serif;'>
                     <h2 style='color: {$urgency_color};'>{$urgency_icon} 返済期限リマインダー</h2>
@@ -83,7 +83,7 @@ class EmailService {
                     </ul>
                     <p>期限までに返済のご対応をお願いいたします。</p>
                     <hr>
-                    <small>このメールはDebtAppからの自動送信です。</small>
+                    <small>このメールはトリタテくんからの自動送信です。</small>
                 </div>
             ";
             
@@ -120,7 +120,7 @@ class EmailService {
             $this->mail->clearAllRecipients();
             $this->mail->addAddress($debt['creditor_email'], $debt['creditor_name']);
             
-            $this->mail->Subject = "【DebtApp】返済期限リマインダー（貸主向け・{$timing_detail}が期限）";
+            $this->mail->Subject = "【トリタテくん】返済期限リマインダー（貸主向け・{$timing_detail}が期限）";
             $this->mail->Body = "
                 <div style='font-family: Arial, sans-serif;'>
                     <h2 style='color: #5bc0de;'>📋 返済期限リマインダー</h2>
@@ -133,7 +133,7 @@ class EmailService {
                     </ul>
                     <p>返済状況をご確認ください。</p>
                     <hr>
-                    <small>このメールはDebtAppからの自動送信です。</small>
+                    <small>このメールはトリタテくんからの自動送信です。</small>
                 </div>
             ";
             
@@ -158,7 +158,7 @@ class EmailService {
             $this->mail->clearAllRecipients();
             $this->mail->addAddress($debt['debtor_email'], $debt['debtor_name']);
             
-            $this->mail->Subject = '【DebtApp】返済期限超過のお知らせ';
+            $this->mail->Subject = '【トリタテくん】返済期限超過のお知らせ';
             $this->mail->Body = "
                 <div style='font-family: Arial, sans-serif;'>
                     <h2 style='color: #d9534f;'>⚠ 返済期限超過のお知らせ</h2>
@@ -174,7 +174,7 @@ class EmailService {
                     </ul>
                     <p>早急にご対応をお願いいたします。</p>
                     <hr>
-                    <small>このメールはDebtAppからの自動送信です。</small>
+                    <small>このメールはトリタテくんからの自動送信です。</small>
                 </div>
             ";
             
@@ -199,7 +199,7 @@ class EmailService {
             $this->mail->clearAllRecipients();
             $this->mail->addAddress($debt['creditor_email'], $debt['creditor_name']);
             
-            $this->mail->Subject = '【DebtApp】返済期限超過のお知らせ（貸主向け）';
+            $this->mail->Subject = '【トリタテくん】返済期限超過のお知らせ（貸主向け）';
             $this->mail->Body = "
                 <div style='font-family: Arial, sans-serif;'>
                     <h2 style='color: #f0ad4e;'>📢 返済期限超過のお知らせ</h2>
@@ -213,7 +213,7 @@ class EmailService {
                     </ul>
                     <p>必要に応じて借主へ連絡をお願いいたします。</p>
                     <hr>
-                    <small>このメールはDebtAppからの自動送信です。</small>
+                    <small>このメールはトリタテくんからの自動送信です。</small>
                 </div>
             ";
             
@@ -338,3 +338,4 @@ class EmailService {
     }
 }
 ?>
+
