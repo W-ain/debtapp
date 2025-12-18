@@ -144,6 +144,16 @@ try {
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
         dateInput.min = `${yyyy}-${mm}-${dd}`;
+        // --- 100年後の日付を取得 (max用) ---
+        const future = new Date();
+        future.setFullYear(today.getFullYear() + 100); // 現在の年に100を足す
+
+        const maxYYYY = future.getFullYear();
+        const maxMM = String(future.getMonth() + 1).padStart(2, '0');
+        const maxDD = String(future.getDate()).padStart(2, '0');
+
+        // 最大値を100年後に設定
+        dateInput.max = `${maxYYYY}-${maxMM}-${maxDD}`;
       }
       // 金額入力の制限（マイナス・記号の排除）
       const amountInput = document.querySelector('input[name="amount"]');
@@ -527,6 +537,7 @@ try {
 
 
 </html>
+
 
 
 
