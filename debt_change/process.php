@@ -130,11 +130,11 @@ try {
     $mail->Port       = 587;
     $mail->CharSet    = 'UTF-8';
     $mail->Encoding   = 'base64';
-    $mail->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
+    $mail->setFrom('debtapp005@gmail.com', 'トリタテくん運営チーム');
     $mail->isHTML(true);
 
     $status_text = $is_full_repayment ? "完済" : "一部返済";
-    $subject = "【DebtApp】返済通知: {$status_text}のお知らせ";
+    $subject = "【トリタテくん】返済通知: {$status_text}のお知らせ";
     
     // メール本文のテンプレート関数
     $body_template = function ($is_creditor) use ($debt_info, $repay_amount, $new_remaining_amount, $is_full_repayment, $status_text) {
@@ -154,7 +154,7 @@ try {
         }
         $body .= "</ul>";
         $body .= "<p>ご確認いただきありがとうございます。</p>";
-        $body .= "<hr><small>このメールはDebtAppからの自動送信メールです。</small>";
+        $body .= "<hr><small>このメールはトリタテくんからの自動送信メールです。</small>";
         return $body;
     };
 
@@ -195,3 +195,4 @@ echo "</body></html>";
 exit;
 
 ?>
+
