@@ -280,7 +280,7 @@ try {
     $mail->SMTPSecure = 'tls';
     $mail->Port       = 587;
 
-    $mail->setFrom('debtapp005@gmail.com', 'DebtApp運営チーム');
+    $mail->setFrom('debtapp005@gmail.com', 'トリタテくん運営チーム');
     $mail->addAddress($debtor_email, $debtor_name);
 
     $image_html = '';
@@ -297,7 +297,7 @@ try {
     $mail->isHTML(true);
     $mail->CharSet  = 'UTF-8';
     $mail->Encoding = 'base64';
-    $mail->Subject  = '【DebtApp】貸付確認のお願い';
+    $mail->Subject  = '【トリタテくん】貸付確認のお願い';
     $mail->Body = "
         <p>{$debtor_name} 様</p>
         <p>以下の内容で貸付が登録されました：</p>
@@ -450,4 +450,5 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
