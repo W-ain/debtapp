@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../config.php'; // ⬅️ Cloud SQL Proxy接続の $pdo がここで定義される
+require_once '../config.php'; //  Cloud SQL Proxy接続の $pdo がここで定義される
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -96,14 +96,14 @@ $remind_settings_str = implode(',', $remind_settings_arr);
 
 if (!$creditor_id || !$debtor_name || !$debtor_email || !$date) {
     exit("<script>
-        alert('エラー: 必要な情報が不足しています。\\n\\nもう一度お試しください。');
+        alert('必要な情報が不足しています。\\n\\nもう一度お試しください。');
         window.location.href = '/login/google_login.php';
     </script>");
 }
 // 数値ではない、または 1 未満の場合はエラー
 if (!is_numeric($money) || $money < 1) {
     exit("<script>
-        alert('エラー: 金額には1以上の数値を入力してください。');
+        alert('金額には1以上の数値を入力してください。');
         window.history.back();
     </script>");
 }
@@ -111,7 +111,7 @@ if (!is_numeric($money) || $money < 1) {
 $today = date('Y-m-d');
 if ($date < $today) {
     exit("<script>
-        alert('エラー: 返済期日に過去の日付は指定できません。');
+        alert('返済期日に過去の日付は指定できません。');
         window.history.back();
     </script>");
 }
@@ -144,7 +144,7 @@ if ($upload_file) {
         if (!is_dir($dynamic_dir)) {
             if (!mkdir($dynamic_dir, 0755, true)) {
                 exit("<script>
-                    alert('エラー: アップロードディレクトリの作成に失敗しました。\\n\\n時間をおいて再度お試しください。');
+                    alert('アップロードディレクトリの作成に失敗しました。\\n\\n時間をおいて再度お試しください。');
                     window.location.href = '/home/home.html';
                 </script>");
             }
@@ -160,7 +160,7 @@ if ($upload_file) {
 }
 
 // -------------------------------------------------------------------
-// ★★★ 新規パートナーの自動登録 & 相手のユーザーID取得 ★★★
+// 新規パートナーの自動登録 & 相手のユーザーID取得
 // -------------------------------------------------------------------
 
 $debtor_user_id = null;
@@ -430,6 +430,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
