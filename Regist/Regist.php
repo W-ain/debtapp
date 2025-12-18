@@ -145,6 +145,20 @@ try {
         const dd = String(today.getDate()).padStart(2, '0');
         dateInput.min = `${yyyy}-${mm}-${dd}`;
       }
+      // ★★★ 追記：金額入力の制限（マイナス・記号の排除） ★★★
+      const amountInput = document.querySelector('input[name="amount"]');
+      if (amountInput) {
+        amountInput.addEventListener('keydown', function(e) {
+          // マイナス記号(-) と 指数(e) の入力を無効化
+          if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+            e.preventDefault();
+          }
+        });
+        // 貼り付けなどで負の数が入った場合もクリアする
+        amountInput.addEventListener('input', function() {
+          if (this.value < 0) this.value = '';
+        });
+      }
     });
   </script>
   <style>
@@ -417,7 +431,7 @@ try {
       <div id="auto-fill-msg">自動入力</div>
 
       <label>貸付金額</label>
-      <input type="number" name="amount" placeholder="例）5000" required>
+      <input type="number" name="amount" placeholder="例）5000" min="1" required>
 
       <label>返済期日</label>
       <input type="date" name="due_date" required>
@@ -509,5 +523,6 @@ try {
 
 
 </html>
+
 
 
