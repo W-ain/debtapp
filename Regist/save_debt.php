@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config.php'; //  Cloud SQL Proxy接続の $pdo がここで定義される
+ini_set('memory_limit', '512M');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -25,18 +26,25 @@ $base_upload_dir = '../uploads/proofs/';
  */
 function resize_and_save_image($temp_path, $dest_path, $extension, $max_width, $quality)
 {
-    switch (strtolower($extension)) {
-        case 'jpeg':
-        case 'jpg':
+    // 画像の情報を取得して、中身がJPEGかPNGかを確実に判断する
+    $image_info = getimagesize($temp_path);
+    if (!$image_info) return false;
+    
+    $mime_type = $image_info['mime'];
+
+    // 形式に合わせて読み込み
+    switch ($mime_type) {
+        case 'image/jpeg':
             $source_image = imagecreatefromjpeg($temp_path);
             break;
-        case 'png':
+        case 'image/png':
             $source_image = imagecreatefrompng($temp_path);
             break;
-        case 'gif':
+        case 'image/gif':
             $source_image = imagecreatefromgif($temp_path);
             break;
         default:
+            error_log("未対応の形式: " . $mime_type);
             return false;
     }
 
@@ -55,24 +63,27 @@ function resize_and_save_image($temp_path, $dest_path, $extension, $max_width, $
 
     $new_image = imagecreatetruecolor($new_width, $new_height);
 
-    if (strtolower($extension) === 'png') {
+    // PNGやGIFの透明度を維持する設定
+    if ($mime_type === 'image/png' || $mime_type === 'image/gif') {
         imagealphablending($new_image, false);
         imagesavealpha($new_image, true);
     }
 
     imagecopyresampled($new_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
-    switch (strtolower($extension)) {
-        case 'jpeg':
-        case 'jpg':
+    // 保存（拡張子ではなく、元がJPEGならJPEGとして保存するのが安全）
+    switch ($mime_type) {
+        case 'image/jpeg':
             $success = imagejpeg($new_image, $dest_path, $quality);
             break;
-        case 'png':
+        case 'image/png':
             $success = imagepng($new_image, $dest_path, 9);
             break;
-        case 'gif':
+        case 'image/gif':
             $success = imagegif($new_image, $dest_path);
             break;
+        default:
+            $success = false;
     }
 
     imagedestroy($source_image);
@@ -439,3 +450,4 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
