@@ -4,12 +4,7 @@ session_start();
 // -----------------------------------------------------------
 // サーバー環境に合わせたパス設定
 // -----------------------------------------------------------
-// 設定ファイルの読み込み
 require_once '../config.php';
-
-// ★重要: PHPMailerの読み込み
-// サーバー上の vendor フォルダの位置に合わせてください
-// 一般的には config.php と同じ階層にあることが多いです
 require_once '../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -30,7 +25,6 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
   $date        = $data['date'] ?? '';
   $token       = $data['token'] ?? '';
 
-  // 金額の整形
   $money_val = (int)preg_replace('/[^0-9]/', '', $money);
 
   if (!$email || !$token) {
@@ -42,7 +36,7 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
 
   try {
     // --------------------------------------------------
-    // SMTP設定 (動作確認済みの設定)
+    // SMTP設定
     // --------------------------------------------------
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com'; 
@@ -58,24 +52,39 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
-    $mail->Subject = '【DebtApp】貸付確認のお願い';
     
-    // ドメイン部分は実際のサーバーURLに合わせて変更が必要な場合があります
-    // ここでは汎用的に http://localhost/debtapp/... となっていますが
-    // 本番環境なら https://your-domain.com/... に適宜読み替えてください
-    $link_url = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"] . "/debtapp/verify_email.php?token={$token}";
+    // ★変更点1: 件名を「再送」に変更
+    $mail->Subject = '【DebtApp】貸付確認のお願い（再送）';
+    
+    // ★変更点2: URLを自動検出に変更
+    // home.php がある場所の「一つ上の階層」に verify_email.php があると仮定してURLを作ります
+    // 例: https://example.com/debtapp/home/home.php -> https://example.com/debtapp/verify_email.php
+    
+    $protocol = (empty($_SERVER["HTTPS"]) ? "http://" : "https://");
+    $host = $_SERVER["HTTP_HOST"];
+    
+    // 現在のスクリプトのディレクトリから、親ディレクトリ(/homeの親)を取得
+    $path = dirname(dirname($_SERVER['SCRIPT_NAME'])); 
+    // Windows環境のバックスラッシュ対策
+    $path = str_replace('\\', '/', $path);
+    // 末尾にスラッシュがあれば削除
+    $path = rtrim($path, '/');
 
+    $link_url = "{$protocol}{$host}{$path}/verify_email.php?token={$token}";
+
+    // ★変更点3: 本文も再送用に変更
     $mail->Body = "
     <p>{$debtor_name} 様</p>
-    <p>以下の内容で貸付が登録されました：</p>
+    <p>（このメールは確認用メールの再送です）</p>
+    <p>以下の内容で貸付が登録されています：</p>
     <ul>
         <li>金額：¥" . number_format($money_val) . "</li>
         <li>返済期限：{$date}</li>
     </ul>
-    <p style=\"margin-top: 20px;\">上記の内容をご確認の上、以下のリンクから認証をお願いします。</p>
+    <p style=\"margin-top: 20px;\">承認メールが見当たらない場合は、以下のリンクから認証をお願いします。</p>
     <p><a href='{$link_url}'>貸付を確認する</a></p>
     <hr>
-    <small>このメールに心当たりがない場合は無視してください。</small>
+    <small>もしこのメールに心当たりがない場合、または既に承認済みの場合は無視してください。</small>
     ";
 
     $mail->send();
@@ -92,12 +101,13 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
 // -----------------------------------------------------------
 $user_id = $_SESSION['user_id'] ?? null;
 if (!$user_id) {
-  header("Location: /login/login.php");
+  // ログイン画面へのパスも同様に調整が必要ならここも確認してください
+  header("Location: ../login/login.php"); 
   exit;
 }
 
 // -----------------------------------------------------------
-// 2. Cookieを使った未読チェックロジック
+// 2. Cookieを使った未読チェック
 // -----------------------------------------------------------
 $modal_data = null;
 $target_debt_id = null;
@@ -107,7 +117,6 @@ $notified_ids_cookie = $_COOKIE[$cookie_name] ?? '';
 $notified_ids = explode(',', $notified_ids_cookie);
 
 try {
-  // ★変更: idが必要なため SELECT * に変更しました
   $stmt_check = $pdo->prepare("
       SELECT * FROM debts 
       WHERE creditor_id = ? AND verified = 1 
@@ -117,7 +126,6 @@ try {
   $approved_debts = $stmt_check->fetchAll(PDO::FETCH_ASSOC);
 
   foreach ($approved_debts as $ad) {
-    // IDカラム名の揺らぎ対応
     $current_id = $ad['debt_id'] ?? $ad['id']; 
 
     if (!in_array((string) $current_id, $notified_ids)) {
@@ -129,9 +137,7 @@ try {
       break; 
     }
   }
-} catch (PDOException $e) {
-  // エラー時は通知無視
-}
+} catch (PDOException $e) {}
 
 // -----------------------------------------------------------
 // 3. 貸付データ取得（承認済みリスト）
@@ -145,17 +151,14 @@ try {
   $stmt->execute([$user_id]);
   $debts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  error_log("データ取得エラー: " . $e->getMessage());
-  // 必要に応じてエラー表示
   $debts = [];
 }
 
 // -----------------------------------------------------------
-// 4. 承認待ちデータ取得（再送機能用）
+// 4. 承認待ちデータ取得
 // -----------------------------------------------------------
 $error_message_pending = null;
 try {
-  // ★変更: emailやtokenが必要なため SELECT * に変更しました
   $stmt_pending = $pdo->prepare("
         SELECT *
         FROM debts 
@@ -177,7 +180,7 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ホーム | 借金管理アプリ</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../styles.css?v=<?php echo time(); ?>">
   <style>
     /* 詳細モーダル関連 */
     #resendBtn {
@@ -272,11 +275,11 @@ try {
       <span class="material-icons">close</span>
     </div>
     <ul class="menu-list">
-      <li class="menu-item"><a href="/home/home.php" class="menu-link"><span class="material-icons">home</span>ホーム</a></li>
-      <li class="menu-item"><a href="/Regist/Regist.php" class="menu-link"><span class="material-icons">add_circle</span>貸付</a></li>
-      <li class="menu-item"><a href="/inquiry/inquiry.php" class="menu-link"><span class="material-icons">payment</span>返済</a></li>
+      <li class="menu-item"><a href="../home/home.php" class="menu-link"><span class="material-icons">home</span>ホーム</a></li>
+      <li class="menu-item"><a href="../Regist/Regist.php" class="menu-link"><span class="material-icons">add_circle</span>貸付</a></li>
+      <li class="menu-item"><a href="../inquiry/inquiry.php" class="menu-link"><span class="material-icons">payment</span>返済</a></li>
       <li style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;"></li>
-      <li class="menu-item"><a href="/login/google_login.php" class="menu-link logout"><span class="material-icons">logout</span>ログアウト</a></li>
+      <li class="menu-item"><a href="../login/google_login.php" class="menu-link logout"><span class="material-icons">logout</span>ログアウト</a></li>
     </ul>
   </div>
 
@@ -284,8 +287,8 @@ try {
 
     <div class="section">
       <div class="btn-group">
-        <a class="btn new-loan" href="/Regist/Regist.php">貸付</a>
-        <a class="btn view-list" href="/inquiry/inquiry.php">返済</a>
+        <a class="btn new-loan" href="../Regist/Regist.php">貸付</a>
+        <a class="btn view-list" href="../inquiry/inquiry.php">返済</a>
       </div>
     </div>
 
@@ -392,7 +395,6 @@ try {
       modal.classList.remove('active');
     }
 
-    // 完了モーダル表示関数
     function showSuccessModal() {
       modalIcon.textContent = 'check_circle';
       modalTitle.textContent = '送信完了';
@@ -446,7 +448,6 @@ try {
         return;
       }
 
-      // 送信開始（確認ダイアログなし）
       resendBtn.disabled = true;
       resendBtn.textContent = '送信中...';
 
@@ -463,7 +464,6 @@ try {
         const result = await response.json();
 
         if (result.success) {
-          // 成功時：詳細モーダルを閉じて、完了モーダルを表示
           closeDetailModal();
           showSuccessModal(); 
         } else {
