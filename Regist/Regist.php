@@ -138,12 +138,16 @@ try {
       }
       // 返済期日の最小値を今日に設定 
       const dateInput = document.querySelector('input[name="due_date"]');
+      const reminderOptions = document.querySelectorAll('.reminder-options .checkbox-label');
+      
       if (dateInput) {
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
         dateInput.min = `${yyyy}-${mm}-${dd}`;
+        
         // --- 100年後の日付を取得 (max用) ---
         const future = new Date();
         future.setFullYear(today.getFullYear() + 100); // 現在の年に100を足す
@@ -154,6 +158,41 @@ try {
 
         // 最大値を100年後に設定
         dateInput.max = `${maxYYYY}-${maxMM}-${maxDD}`;
+
+        // --- 日付変更時にチェックボックスを制御する関数 ---
+        function updateReminderCheckboxes() {
+        if (!dateInput.value) return;
+
+        const selectedDate = new Date(dateInput.value);
+        selectedDate.setHours(0, 0, 0, 0);
+
+        // 今日から選択日までの日数を計算
+        const diffTime = selectedDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        reminderOptions.forEach(label => {
+            const checkbox = label.querySelector('input[name="remind_settings[]"]');
+            const offset = parseInt(checkbox.value);
+
+            // offsetが負の値（-3日前、-1日前など）の場合
+            // 例: diffDaysが2（明後日が期日）なら、-3日前（offset: -3）は表示しない
+            if (offset < 0) {
+                const daysBefore = Math.abs(offset);
+                if (diffDays < daysBefore) {
+                    label.style.display = 'none'; // 非表示
+                    checkbox.checked = false;    // チェックも外す
+                } else {
+                    label.style.display = 'flex'; // 表示
+                }
+            } else {
+                // 当日(0)や翌日(1)などは常に表示で良い場合はそのまま
+                label.style.display = 'flex';
+            }
+        });
+        }
+
+        // イベントリスナー登録
+        dateInput.addEventListener('change', updateReminderCheckboxes);
       }
       // 金額入力の制限（マイナス・記号の排除）
       const amountInput = document.querySelector('input[name="amount"]');
@@ -554,6 +593,7 @@ try {
 
 
 </html>
+
 
 
 
