@@ -192,10 +192,14 @@ if ($last_data) {
 $title = "{$debtor_name}への貸付 (¥" . number_format($money) . ")";
 
 // -------------------------------------------------------------------
-// データ登録 (変更なし)
+// データ登録とメール送信（トランザクション管理）
 // -------------------------------------------------------------------
 
 try {
+    // 1. トランザクション開始
+    $pdo->beginTransaction();
+
+    // 2. データベースへの登録
     $sql = "
         INSERT INTO debts (
             creditor_id,
@@ -205,7 +209,7 @@ try {
             title,
             money,
             date,
-            remind_settings, -- ★追加
+            remind_settings,
             verified,
             status,
             debt_hash,
@@ -224,29 +228,16 @@ try {
         $title,
         $money,
         $date,
-        $remind_settings_str, // ★追加
+        $remind_settings_str,
         $debt_hash,
         $token,
         $proof_image_path,
         $proof_audio_path
     ]);
-} catch (PDOException $e) {
-    error_log("DB実行エラー: " . $e->getMessage());
-    exit("
-        <script>
-            alert('データベースエラーが発生しました。\\n少し時間をおいて再度お試しください。');
-            window.location.href = '/home/home.php';
-        </script>
-    ");}
 
-// -------------------------------------------------------------------
-// メール送信 (変更なし)
-// -------------------------------------------------------------------
+    // 3. メール送信の準備と実行
+    $mail = new PHPMailer(true);
 
-$mail = new PHPMailer(true);
-$success_message = "確認メールを {$debtor_email} に送信しました。";
-
-try {
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
@@ -288,13 +279,30 @@ try {
         <hr>
         <small>このメールに心当たりがない場合は無視してください。</small>
     ";
-
+    
+    // メール送信実行
     $mail->send();
-    $response_message = $success_message;
-    $redirect_url     = '../home/home.php';
 
+    // 4. すべて成功したならコミット（DBに書き込み確定）
+    $pdo->commit();
+    
+    $response_message = "確認メールを {$debtor_email} に送信しました。";
+    $redirect_url     = '../home/home.php';
+    
 } catch (Exception $e) {
-    $response_message = "メール送信失敗: " . strip_tags($e->getMessage());
+    // 5. どこかでエラーが起きたらロールバック（DB登録をキャンセル）
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    
+    // エラーメッセージの振り分け
+    if ($e instanceof PDOException) {
+        $response_message = "データベースエラーが発生しました。";
+    } else {
+        $response_message = "メール送信失敗: " . strip_tags($e->getMessage());
+    }
+
+    error_log("エラー: " . $e->getMessage());
     $redirect_url     = '../home/home.php';
 }
 
@@ -407,6 +415,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
