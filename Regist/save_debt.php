@@ -94,10 +94,17 @@ $date         = $_POST['due_date'] ?? '';
 $remind_settings_arr = $_POST['remind_settings'] ?? [];
 $remind_settings_str = implode(',', $remind_settings_arr);
 
-if (!$creditor_id || !$debtor_name || !$debtor_email || $money <= 0 || !$date) {
+if (!$creditor_id || !$debtor_name || !$debtor_email || !$date) {
     exit("<script>
         alert('エラー: 必要な情報が不足しています。\\n\\nもう一度お試しください。');
-        window.location.href = '/login/login.html';
+        window.location.href = '/login/google_login.php';
+    </script>");
+}
+// 数値ではない、または 1 未満の場合はエラー
+if (!is_numeric($money) || $money < 1) {
+    exit("<script>
+        alert('エラー: 金額には1以上の数値を入力してください。');
+        window.history.back();
     </script>");
 }
 // 過去の日付チェック
@@ -423,6 +430,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
