@@ -132,7 +132,7 @@ try {
 
         // 結果表示
         if ($debtor_success && $creditor_success) {
-            echo "送信成功 ✅\n<br>";
+            echo "送信成功 ⭕\n<br>";
         } else {
             echo "一部送信失敗 ⚠️\n<br>";
         }
@@ -149,4 +149,5 @@ try {
 }
 
 echo "<br>--- 処理終了 ---\n";
+
 
