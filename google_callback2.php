@@ -130,19 +130,19 @@ try {
 $image_html          = '';
 $proof_image_path_db = $debt['proof_image_path'] ?? null;
 
-if ($proof_image_path_db) {
-    // DBに保存されているパス（例: ../uploads/proofs/...）から、
-    // HTMLのsrc属性として正しいパス（例: uploads/proofs/...）に調整
-    $image_src = str_replace('../', '', $proof_image_path_db);
+$bucketName = 'my-debt-app-storage';
 
-    $image_html = '
-        <div class="info-item image-item">
-            <span class="label">証拠画像:</span>
-            <div class="proof-image-wrapper">
-                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
-            </div>
-        </div>
-    ';
+if ($proof_image_path_db) {
+    $image_src = "https://storage.googleapis.com/{$bucketName}/" . $proof_image_path_db;
+
+    $image_html = '
+        <div class="info-item image-item">
+            <span class="label">証拠画像:</span>
+            <div class="proof-image-wrapper">
+                <img src="' . htmlspecialchars($image_src) . '" alt="証拠画像" class="proof-image"/>
+            </div>
+        </div>
+    ';
 }
 ?>
 
@@ -391,6 +391,7 @@ if ($proof_image_path_db) {
     </div>
 </body>
 </html>
+
 
 
 
