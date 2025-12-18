@@ -240,7 +240,7 @@ try {
       }
     });
     // -----------------------------------------------------------
-    // ✅ Cookieを使ったモーダル制御機能
+    // Cookieを使ったモーダル制御機能
     // -----------------------------------------------------------
     const modal = document.getElementById('notificationModal');
 
@@ -278,7 +278,7 @@ try {
         modal.classList.add('active');
       }, 100);
 
-      // ✅ 「表示した」という事実をCookieに残す（コメントアウト解除済み）
+      // 「表示した」という事実をCookieに残す（コメントアウト解除済み）
       // これにより次回リロード時からは表示されなくなります
       if (targetDebtId) {
         addIdToCookie(targetDebtId);
@@ -294,6 +294,7 @@ try {
 
 
 </html>
+
 
 
 
