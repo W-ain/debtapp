@@ -1,36 +1,47 @@
-# ベースイメージ（PHP 8.1 + Apache）
+# ベースイメージ
 FROM php:8.1-apache
 
-# システムの依存関係とPHP拡張モジュールのインストール
-# (データベースを使う場合、pdo_mysqlなどが必要です)
+# 1. システムの依存関係をまとめてインストール
 RUN apt-get update && apt-get install -y \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
     zip \
     unzip \
     git \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Apacheのmod_rewriteを有効化（URL書き換えを使う場合）
+# 2. GD拡張機能を設定（JPEGとFreetypeを有効化）
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+# 3. PHP拡張モジュールをまとめてインストール
+RUN docker-php-ext-install -j$(nproc) \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd
+
+# 4. Apacheのmod_rewriteを有効化
 RUN a2enmod rewrite
 
-# Composerのインストール
+# 5. Composerのインストール
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 作業ディレクトリの設定
+# 6. 作業ディレクトリの設定
 WORKDIR /var/www/html
 
-# ソースコードをコンテナにコピー
+# 7. ソースコードのコピー
 COPY . /var/www/html
 
-# Composerの依存関係をインストール
-# (vendorフォルダをローカルからコピーせず、ビルド時にインストールするのが定石です)
+# 8. Composerの依存関係をインストール
 RUN composer install --no-dev --optimize-autoloader
 
-# ポート8080をリッスンするようにApacheを設定
-# Cloud Runはデフォルトで8080番ポートへのリクエストを待ち受けます
+# 9. Cloud Run用のポート設定 (80 -> 8080)
 RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
 
-# 権限の調整（Apacheユーザーがファイルを読めるように）
+# 10. 権限の調整
 RUN chown -R www-data:www-data /var/www/html
