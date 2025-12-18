@@ -161,12 +161,29 @@ try {
         // UX向上: スマホで数字キーパッドを表示させる（HTML側で設定がない場合用
         amountInput.setAttribute('inputmode', 'numeric');
         amountInput.setAttribute('pattern', '[0-9]*');
+        
         amountInput.addEventListener('keydown', function(e) {
-          // マイナス記号(-) と 指数(e) の入力を無効化
+          // 許可するキーのリスト（バックスペース、削除、矢印キー、タブ、エンターなど）
+          const allowedKeys = [
+            'Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 
+            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Home', 'End'
+          ];
+          // 1. 許可リストにあるキーなら何もしない（通す）
+          if (allowedKeys.includes(e.key)) {
+            return;
+          }
+          // 2. Ctrl+A, Ctrl+C, Ctrl+V などのショートカットキーも許可する
+          // (これがないとコピペや全選択ができなくなります)
+          if (e.ctrlKey || e.metaKey) {
+            return;
+          }
+          // 3. 上記以外で、数字(0-9)でない場合は入力を無効化
           if (!/^[0-9]$/.test(e.key)) {
             e.preventDefault();
           }
         });
+        
         // 貼り付けなどで負の数が入った場合もクリアする
         amountInput.addEventListener('input', function() {
           // 数字以外の文字（[^0-9]）を空文字に置換
@@ -537,6 +554,7 @@ try {
 
 
 </html>
+
 
 
 
