@@ -61,13 +61,13 @@ if (!$error_message) {
 
                 $mail_borrower->setFrom(
                     'debtapp005@gmail.com',
-                    'DebtApp運営チーム'
+                    'トリタテくん運営チーム'
                 );
                 $mail_borrower->addAddress($email);
                 $mail_borrower->isHTML(true);
                 $mail_borrower->CharSet  = 'UTF-8';
                 $mail_borrower->Encoding = 'base64';
-                $mail_borrower->Subject  = '【DebtApp】貸付の承認が完了しました';
+                $mail_borrower->Subject  = '【トリタテくん】貸付の承認が完了しました';
                 $mail_borrower->Body     = "
                     <p>ご担当者様</p>
                     <p>貸付（貸主: {$debt['lender_name']} 様）の承認処理が完了しました。</p>
@@ -76,7 +76,7 @@ if (!$error_message) {
                         <li>金額：¥" . number_format($debt['money']) . "</li>
                         <li>返済期限：{$debt['date']}</li>
                     </ul>
-                    <p>今後ともDebtAppをご利用ください。</p>
+                    <p>今後ともトリタテくんをご利用ください。</p>
                     <hr>
                     <small>このメールは自動送信されています。</small>
                 ";
@@ -102,7 +102,7 @@ if (!$error_message) {
 
                 $mail_lender->setFrom(
                     'debtapp005@gmail.com',
-                    'DebtApp運営チーム'
+                    'トリタテくん運営チーム'
                 );
                 $mail_lender->addAddress(
                     $debt['lender_email'],
@@ -112,7 +112,7 @@ if (!$error_message) {
                 $mail_lender->isHTML(true);
                 $mail_lender->CharSet  = 'UTF-8';
                 $mail_lender->Encoding = 'base64';
-                $mail_lender->Subject  = '【DebtApp】借主が貸付を承認しました';
+                $mail_lender->Subject  = '【トリタテくん】借主が貸付を承認しました';
                 $mail_lender->Body     = "
                     <p>{$debt['lender_name']} 様</p>
                     <p>借主（{$email}）が以下の貸付内容を承認しました。</p>
@@ -273,4 +273,5 @@ if (!$error_message) {
     </div>
 </body>
 </html>
+
 
