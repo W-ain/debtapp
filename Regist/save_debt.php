@@ -4,6 +4,7 @@ require_once '../config.php'; //  Cloud SQL Proxy接続の $pdo がここで定�
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Google\Cloud\Storage\StorageClient;
 
 require '../vendor/autoload.php'; // composerでインストールしたPHPMailerを読み込み
 
@@ -128,35 +129,49 @@ if (isset($_FILES['proof_camera']) && $_FILES['proof_camera']['error'] === UPLOA
 }
 
 if ($upload_file) {
-    $file_extension     = pathinfo($upload_file['name'], PATHINFO_EXTENSION);
+    $file_extension = strtolower(pathinfo($upload_file['name'], PATHINFO_EXTENSION));
     $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-    if (in_array(strtolower($file_extension), $allowed_extensions)) {
-        $hash_input   = $upload_file['name'] . time() . $creditor_id . microtime();
-        $hashed_name  = hash('sha256', $hash_input);
+    if (in_array($file_extension, $allowed_extensions)) {
+        $hash_input = $upload_file['name'] . time() . $creditor_id . microtime();
+        $hashed_name = hash('sha256', $hash_input);
+        $unique_filename = $hashed_name . '.' . $file_extension;
 
-        $current_year  = date('Y');
-        $current_month = date('m');
+        // --- GCSの設定 ---
+        $bucketName = 'あなたのバケット名'; // 先ほど作成したバケット名
+        $storage = new StorageClient();
+        $bucket = $storage->bucket($bucketName);
 
-        $first_char_dir = substr($hashed_name, 0, 1);
-        $dynamic_dir    = $base_upload_dir . $current_year . '/' . $current_month . '/' . $first_char_dir . '/';
+        // --- 一時的な保存先（Cloud Runで許可されている場所） ---
+        $temp_local_path = '/tmp/' . $unique_filename;
 
-        if (!is_dir($dynamic_dir)) {
-            if (!mkdir($dynamic_dir, 0755, true)) {
-                exit("<script>
-                    alert('アップロードディレクトリの作成に失敗しました。\\n\\n時間をおいて再度お試しください。');
-                    window.location.href = '/home/home.html';
-                </script>");
-            }
-        }
+        // リサイズして一旦 /tmp に保存
+        if (resize_and_save_image($upload_file['tmp_name'], $temp_local_path, $file_extension, 800, 80)) {
+            
+            // GCS上のパス（日付/ハッシュ頭文字/ファイル名）
+            $current_year = date('Y');
+            $current_month = date('m');
+            $first_char = substr($hashed_name, 0, 1);
+            $gcs_object_path = "{$current_year}/{$current_month}/{$first_char}/{$unique_filename}";
 
-        $unique_filename  = $hashed_name . '.' . $file_extension;
-        $destination_path = $dynamic_dir . $unique_filename;
+            // GCSへアップロード
+            $bucket->upload(
+                fopen($temp_local_path, 'r'),
+                ['name' => $gcs_object_path]
+            );
 
-        if (resize_and_save_image($upload_file['tmp_name'], $destination_path, $file_extension, 800, 80)) {
-            $proof_image_path = $destination_path;
+            // DBに保存するパス（後で表示に使う）
+            $proof_image_path = $gcs_object_path;
+
+            // PHPMailer用の添付ファイルパス（/tmpにあるものを使用）
+            $file_path = $temp_local_path; 
         }
     }
+}
+
+// ... (メール送信処理のあと、不要になった一時ファイルを削除) ...
+if (isset($temp_local_path) && file_exists($temp_local_path)) {
+    unlink($temp_local_path);
 }
 
 // -------------------------------------------------------------------
@@ -430,6 +445,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
