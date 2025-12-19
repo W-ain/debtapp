@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config.php';
 
 // Googleから返されたcodeを取得
@@ -81,6 +80,7 @@ $_SESSION['name']    = $name;
 header("Location: /home/home.php");
 
 exit;
+
 
 
 
