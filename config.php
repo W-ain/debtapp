@@ -94,29 +94,45 @@ $google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
 
-require_once 'SessionHandler.php'; // ステップ2のファイルを読み込み
+require_once 'SessionHandler.php';
 
-// $pdo が定義された後に記述
-$handler = new DatabaseSessionHandler($pdo);
-session_set_save_handler($handler, true);
+// セッションがまだ開始されていない場合のみ設定を行う
+if (session_status() === PHP_SESSION_NONE) {
+    
+    // DB接続 ($pdo) が存在することを確認
+    if (isset($pdo)) {
+        $handler = new DatabaseSessionHandler($pdo);
+        session_set_save_handler($handler, true);
+    }
 
-// セッションのクッキー有効期限を30分に設定
-$timeout = 1800; // 30分 = 1800秒
-ini_set('session.gc_maxlifetime', $timeout);
-session_set_cookie_params($timeout);
+    $timeout = 1800; // 30分
+    ini_set('session.gc_maxlifetime', $timeout);
 
-session_start();
+    // クッキーの設定
+    session_set_cookie_params([
+        'lifetime' => $timeout,
+        'path' => '/',
+        'secure' => true,      // Cloud RunはHTTPSなのでtrue
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
 
-// 操作が30分なかった場合の強制ログアウト処理（念押し）
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+    session_start();
+}
+
+// タイムアウト判定
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
     session_unset();
     session_destroy();
-    header("Location: /login/google_login.php?timeout=1");
-    exit;
+    // ここでリダイレクトする場合、すでにHTMLが出力されていないことが条件
+    if (!headers_sent()) {
+        header("Location: /login/google_login.php?timeout=1");
+        exit;
+    }
 }
 $_SESSION['last_activity'] = time();
-?>
 
+?>
 
 
 
