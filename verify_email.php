@@ -84,6 +84,7 @@ $authUrl = $client->createAuthUrl();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付確認ページ</title>
+    <link rel="icon" href="../favicon.ico?v=1">
 
     <style>
         * {
@@ -222,6 +223,7 @@ unset($_SESSION['email_mismatch'], $_SESSION['registered_email'], $_SESSION['aut
     </div>
 </body>
 </html>
+
 
 
 
