@@ -64,7 +64,7 @@ if (isset($tokenData['error'])) {
     exit("
         <script>
             alert('Google認証に失敗しました。\\nもう一度お試しください。');
-            window.location.href = '/debtapp/verify_email.php';
+            window.location.href = '/verify_email.php';
         </script>
     ");
 }
@@ -401,5 +401,6 @@ if ($proof_image_path_db) {
 </body>
 
 </html>
+
 
 
