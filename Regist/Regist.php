@@ -516,11 +516,11 @@ try {
         autocomplete="off">
 
       <label>相手の名前</label>
-      <input type="text" name="partner_name" placeholder="例）山田太郎" required>
+      <input type="text" name="partner_name" placeholder="例）山田太郎" maxlength="20" required>
       <div id="auto-fill-msg">自動入力</div>
 
       <label>貸付金額</label>
-      <input type="number" name="amount" placeholder="例）5000" min="1" required>
+      <input type="number" name="amount" placeholder="例）5000" min="1" max="99999999" required>
 
       <label>返済期日</label>
       <input type="date" name="due_date" required>
@@ -612,14 +612,3 @@ try {
 
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
