@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'config.php';
 require_once 'vendor/autoload.php';
 
@@ -223,5 +222,6 @@ unset($_SESSION['email_mismatch'], $_SESSION['registered_email'], $_SESSION['aut
     </div>
 </body>
 </html>
+
 
 
