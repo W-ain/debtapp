@@ -152,6 +152,7 @@ if ($proof_image_path_db) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付確認ページ</title>
+    <link rel="icon" href="../favicon.ico?v=1">
 
     <script>
         function openApprovalModal() {
@@ -401,6 +402,7 @@ if ($proof_image_path_db) {
 </body>
 
 </html>
+
 
 
 
