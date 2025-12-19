@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 // PHPの読み込みパス
 require_once '../config.php';
@@ -144,6 +143,7 @@ try {
 
 
 </html>
+
 
 
 
