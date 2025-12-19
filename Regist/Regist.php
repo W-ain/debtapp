@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config.php'; // DB接続
 
 // ログインユーザー確認
@@ -613,6 +612,7 @@ try {
 
 
 </html>
+
 
 
 
