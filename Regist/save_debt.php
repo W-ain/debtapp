@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config.php'; //  Cloud SQL Proxy接続の $pdo がここで定義される
 ini_set('memory_limit', '512M');
 
@@ -450,5 +449,6 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
