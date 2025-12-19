@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'vendor/autoload.php';
 require_once 'config.php';
 
@@ -402,3 +401,4 @@ if ($proof_image_path_db) {
 </body>
 
 </html>
+
