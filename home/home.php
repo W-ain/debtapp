@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // -----------------------------------------------------------
 // サーバー環境に合わせたパス設定
@@ -57,7 +58,6 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
     
     // ★変更点2: URLを自動検出に変更
     // home.php がある場所の「一つ上の階層」に verify_email.php があると仮定してURLを作ります
-    // 例: https://example.com/debtapp/home/home.php -> https://example.com/debtapp/verify_email.php
     
     $protocol = (empty($_SERVER["HTTPS"]) ? "http://" : "https://");
     $host = $_SERVER["HTTP_HOST"];
@@ -298,6 +298,12 @@ try {
 
   <div class="container">
 
+    <div class="header-card">
+        <h2>
+            <a href="../home/home.php" class="title-link">トリタテくん</a>
+        </h2>
+        <p>友達との金銭のやり取りを記録</p>
+    </div>
     <div class="section">
       <div class="btn-group">
         <a class="btn new-loan" href="../Regist/Regist.php">貸付</a>
@@ -507,8 +513,3 @@ try {
 
 </body>
 </html>
-
-
-
-
-
