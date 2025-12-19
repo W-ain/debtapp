@@ -142,6 +142,7 @@ if (!$error_message) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸付承認完了</title>
+    <link rel="icon" href="../favicon.ico?v=1">
 
     <style>
         body {
@@ -272,6 +273,7 @@ if (!$error_message) {
     </div>
 </body>
 </html>
+
 
 
 
