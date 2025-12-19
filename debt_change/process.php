@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config.php'; // $pdo が定義されている
 require '../vendor/autoload.php';
 
@@ -195,4 +194,5 @@ echo "</body></html>";
 exit;
 
 ?>
+
 
