@@ -110,7 +110,7 @@ try {
         $_SESSION['authenticated_email'] = $email;
 
         // 認証ページに戻す（Google認証からやり直し）
-        header("Location: /debtapp/verify_email.php");
+        header("Location: verify_email.php");
         exit;
     }
 } catch (PDOException $e) {
@@ -401,4 +401,5 @@ if ($proof_image_path_db) {
 </body>
 
 </html>
+
 
