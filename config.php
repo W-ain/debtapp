@@ -94,6 +94,30 @@ $google_auth_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 $google_token_endpoint = "https://oauth2.googleapis.com/token";
 $google_userinfo_endpoint = "https://www.googleapis.com/oauth2/v2/userinfo";
 
+require_once 'SessionHandler.php'; // ステップ2のファイルを読み込み
+
+// $pdo が定義された後に記述
+$handler = new DatabaseSessionHandler($pdo);
+session_set_save_handler($handler, true);
+
+// セッションのクッキー有効期限を30分に設定
+$timeout = 1800; // 30分 = 1800秒
+ini_set('session.gc_maxlifetime', $timeout);
+session_set_cookie_params($timeout);
+
+session_start();
+
+// 操作が30分なかった場合の強制ログアウト処理（念押し）
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
+    session_unset();
+    session_destroy();
+    header("Location: /login/google_login.php?timeout=1");
+    exit;
+}
+$_SESSION['last_activity'] = time();
+?>
+
+
 
 
 
