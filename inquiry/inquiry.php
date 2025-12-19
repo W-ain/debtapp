@@ -121,6 +121,7 @@ try {
     <title>トリタテくん</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css?v=<?php echo time(); ?>">
+    <link rel="icon" href="../favicon.ico?v=1">
 </head>
 
 <body>
@@ -399,6 +400,7 @@ try {
 
 
 </html>
+
 
 
 
