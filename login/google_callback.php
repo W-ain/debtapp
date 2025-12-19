@@ -63,8 +63,8 @@ $user = $stmt->fetch();
 // いなければユーザー登録
 if (!$user) {
     // 【修正点 2/3】 name -> user_name に変更。is_verifiedはテーブルにないので削除。
-    $stmt = $pdo->prepare("INSERT INTO users (user_name, email, password_hash) VALUES (?, ?, ?)");
-    $stmt->execute([$name, $email, '']);
+    $stmt = $pdo->prepare("INSERT INTO users (user_name, email) VALUES (?, ?)");
+    $stmt->execute([$name, $email]);
     $user_id = $pdo->lastInsertId();
 } else {
     // 【修正点 3/3】 $user['id'] -> $user['user_id'] に変更
@@ -80,6 +80,7 @@ $_SESSION['name']    = $name;
 header("Location: /home/home.php");
 
 exit;
+
 
 
 
