@@ -315,13 +315,18 @@ try {
           $original_money = $debt['money'];
           $total_repaid = $debt['total_repaid_amount'];
           $remaining_money = $original_money - $total_repaid;
+
+          // 残高が0以下の場合は、このループの回（このカード）をスキップする
+          if ($remaining_money <= 0) {
+            continue;
+          }
           ?>
           <div class="item">
             <div>
               <strong><?= htmlspecialchars($debt['debtor_name']); ?></strong><br>
               <span>📅 <?= htmlspecialchars($debt['date']); ?></span>
             </div>
-            <strong style="color:#4285f4;">¥<?= number_format(max(0, $remaining_money)); ?></strong>
+            <strong style="color:#4285f4;">¥<?= number_format($remaining_money); ?></strong>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
@@ -503,6 +508,7 @@ try {
 
 </body>
 </html>
+
 
 
 
