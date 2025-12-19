@@ -101,7 +101,7 @@ if (isset($data['action']) && $data['action'] === 'resend_email') {
 $user_id = $_SESSION['user_id'] ?? null;
 if (!$user_id) {
   // ログイン画面へのパスも同様に調整が必要ならここも確認してください
-  header("Location: ../login/login.php"); 
+  header("Location: ../login/google_login.php"); 
   exit;
 }
 
@@ -513,3 +513,4 @@ try {
 
 </body>
 </html>
+
