@@ -22,9 +22,10 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
     }
 
     public function write($id, $data): bool {
-        $now = time();
+        $now = time(); // Unixタイムスタンプ（整数）
+        // テーブルのカラム名 access に合わせて値を保存
         $stmt = $this->pdo->prepare("
-            REPLACE INTO sessions (id, data, last_accessed) 
+            REPLACE INTO sessions (id, data, access) 
             VALUES (?, ?, ?)
         ");
         return $stmt->execute([$id, $data, $now]);
@@ -35,9 +36,11 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
         return $stmt->execute([$id]);
     }
 
-    public function gc($maxlifetime): int|false {
+    #[\ReturnTypeWillChange]
+    public function gc($maxlifetime) {
         $old = time() - $maxlifetime;
-        $stmt = $this->pdo->prepare("DELETE FROM sessions WHERE last_accessed < ?");
+        // access カラムを使って古いセッションを削除
+        $stmt = $this->pdo->prepare("DELETE FROM sessions WHERE access < ?");
         $stmt->execute([$old]);
         return true;
     }
