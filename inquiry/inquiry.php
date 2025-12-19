@@ -168,7 +168,7 @@ try {
     <div class="container">
         <div class="header-card">
             <h2>
-                <a href="/home/home.php" class="title-link">貸借管理</a>
+                <a href="/home/home.php" class="title-link">トリタテくん</a>
             </h2>
             <p>友達との金銭のやり取りを記録</p>
         </div>
@@ -400,5 +400,6 @@ try {
 
 
 </html>
+
 
 
