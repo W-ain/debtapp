@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once '../config.php';
 
 if (isset($_GET['id'])) {
     $_SESSION['view_debt_id'] = $_GET['id'];
@@ -13,3 +13,4 @@ if (isset($_GET['id'])) {
 }
 
 ?>
+
