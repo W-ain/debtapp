@@ -1,5 +1,4 @@
 <?php
-session_start();
 // ファイルの場所に合わせてパスを調整してください（inquiryフォルダ内なら '../config.php'）
 require_once '../config.php';
 
@@ -400,6 +399,7 @@ try {
 
 
 </html>
+
 
 
 
