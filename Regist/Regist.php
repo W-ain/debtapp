@@ -28,6 +28,7 @@ try {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../favicon.ico?v=1">
   <title>新規貸付</title>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -612,3 +613,4 @@ try {
 
 
 </html>
+
