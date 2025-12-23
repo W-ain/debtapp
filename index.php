@@ -29,6 +29,6 @@ if (strpos($userAgent, 'Line') !== false ||
 // loginフォルダの中にある login.html へ転送する
 // ==========================================
 
-header('Location: login/google_login.php');
+header('Location: login/google_login.html');
 exit;
 ?>
