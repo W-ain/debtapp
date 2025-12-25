@@ -359,7 +359,16 @@ try {
             <div>
               <strong><?= htmlspecialchars($pending['debtor_name'] ?? '名称不明'); ?></strong>
               <span class="pending-badge">確認中</span><br>
-              <span style="font-size: 0.8rem; color: #666;">申請日: <?= htmlspecialchars($pending['created_at'] ?? ''); ?></span>
+              <span style="font-size: 0.8rem; color: #666;">
+                申請日: 
+                <?php
+                if (!empty($pending['created_at'])) {
+                  $dt = new DateTime($pending['created_at'], new DateTimeZone('UTC'));
+                  $dt->setTimezone(new DateTimeZone('Asia/Tokyo'));
+                  echo htmlspecialchars($dt->format('Y-m-d H:i:s'));
+                }
+                ?>
+                </span>
             </div>
             <strong style="color:#e67e22;">¥<?= number_format($pending['money'] ?? 0); ?></strong>
           </div>
@@ -513,6 +522,7 @@ try {
 
 </body>
 </html>
+
 
 
 
