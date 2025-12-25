@@ -143,8 +143,8 @@ try {
         $body = "<p>{$recipient_name} 様</p>";
         $body .= "<p>以下の貸付について、{$partner_name}から{$status_text}がありました。</p>";
         $body .= "<ul>";
-        $body .= "<li>今回返済額：¥" . number_format($repay_amount) . "</li>";
-        $body .= "<li>元金：¥" . number_format($debt_info['money']) . "</li>";
+        $body .= "<li>今回返済した金額：¥" . number_format($repay_amount) . "</li>";
+        $body .= "<li>元の返済金額：¥" . number_format($debt_info['money']) . "</li>";
         
         if ($is_full_repayment) {
             $body .= "<li style='color: green; font-weight: bold;'>最終的な残高：¥0（完済）🎉</li>";
@@ -194,5 +194,6 @@ echo "</body></html>";
 exit;
 
 ?>
+
 
 
