@@ -79,7 +79,7 @@ class EmailService {
                     <ul>
                         <li>貸主: {$debt['creditor_name']}</li>
                         <li>金額: ¥" . number_format($debt['money']) . "</li>
-                        <li>期限: {$debt['date']}（{$timing_detail}）</li>
+                        <li>返済期日: {$debt['date']}（{$timing_detail}）</li>
                     </ul>
                     <p>期限までに返済のご対応をお願いいたします。</p>
                     <hr>
@@ -129,7 +129,7 @@ class EmailService {
                     <ul>
                         <li>借主: {$debt['debtor_name']}</li>
                         <li>金額: ¥" . number_format($debt['money']) . "</li>
-                        <li>期限: {$debt['date']}（{$timing_detail}）</li>
+                        <li>返済期日: {$debt['date']}（{$timing_detail}）</li>
                     </ul>
                     <p>返済状況をご確認ください。</p>
                     <hr>
@@ -169,7 +169,7 @@ class EmailService {
                     <ul>
                         <li>貸主: {$debt['creditor_name']}</li>
                         <li>金額: ¥" . number_format($debt['money']) . "</li>
-                        <li>期限: {$debt['date']}</li>
+                        <li>返済期日: {$debt['date']}</li>
                         <li>超過日数: {$overdue_days}日</li>
                     </ul>
                     <p>早急にご対応をお願いいたします。</p>
@@ -208,7 +208,7 @@ class EmailService {
                     <ul>
                         <li>借主: {$debt['debtor_name']}</li>
                         <li>金額: ¥" . number_format($debt['money']) . "</li>
-                        <li>期限: {$debt['date']}</li>
+                        <li>返済期日: {$debt['date']}</li>
                         <li>超過日数: {$overdue_days}日</li>
                     </ul>
                     <p>必要に応じて借主へ連絡をお願いいたします。</p>
@@ -338,4 +338,5 @@ class EmailService {
     }
 }
 ?>
+
 
