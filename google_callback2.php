@@ -375,7 +375,7 @@ if ($proof_image_path_db) {
             </div>
 
             <div class="info-item" style="margin-top: 10px;">
-                <span class="label">返済期限:</span>
+                <span class="label">返済期日:</span>
                 <span class="value"><?= htmlspecialchars($debt['date']) ?></span>
             </div>
 
@@ -402,6 +402,7 @@ if ($proof_image_path_db) {
 </body>
 
 </html>
+
 
 
 
