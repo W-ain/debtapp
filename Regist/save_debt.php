@@ -302,7 +302,7 @@ try {
         <p>以下の内容で貸付が登録されました：</p>
         <ul>
             <li>金額：¥" . number_format($money) . "</li>
-            <li>返済期限：{$date}</li>
+            <li>返済期日：{$date}</li>
         </ul>
         {$image_html}
         <p style='margin-top: 20px;'>以下のリンクから認証をお願いします。</p>
@@ -450,6 +450,7 @@ function redirectToHome() {
 <?php
 exit;
 ?>
+
 
 
 
