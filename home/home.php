@@ -264,7 +264,7 @@ try {
           <span class="detail-value" id="modalDetailMoney"></span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">申請日</span>
+          <span class="detail-label">返済期日</span>
           <span class="detail-value" id="modalDetailDate"></span>
         </div>
         <p style="margin-top:15px; font-size:0.85rem; color:#666;">
@@ -513,6 +513,7 @@ try {
 
 </body>
 </html>
+
 
 
 
