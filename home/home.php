@@ -365,7 +365,7 @@ try {
                 if (!empty($pending['created_at'])) {
                   $dt = new DateTime($pending['created_at'], new DateTimeZone('UTC'));
                   $dt->setTimezone(new DateTimeZone('Asia/Tokyo'));
-                  echo htmlspecialchars($dt->format('Y-m-d H:i:s'));
+                  echo htmlspecialchars($dt->format('Y-m-d H:i'));
                 }
                 ?>
                 </span>
@@ -522,6 +522,7 @@ try {
 
 </body>
 </html>
+
 
 
 
