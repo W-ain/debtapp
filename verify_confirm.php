@@ -73,7 +73,7 @@ if (!$error_message) {
                     <p>以下の内容で正式に記録されましたので、ご確認ください。</p>
                     <ul>
                         <li>金額：¥" . number_format($debt['money']) . "</li>
-                        <li>返済期限：{$debt['date']}</li>
+                        <li>返済期日：{$debt['date']}</li>
                     </ul>
                     <p>今後ともトリタテくんをご利用ください。</p>
                     <hr>
@@ -117,7 +117,7 @@ if (!$error_message) {
                     <p>借主（{$email}）が以下の貸付内容を承認しました。</p>
                     <ul>
                         <li>金額：¥" . number_format($debt['money']) . "</li>
-                        <li>返済期限：{$debt['date']}</li>
+                        <li>返済期日：{$debt['date']}</li>
                     </ul>
                     <p>これにより貸付が正式に成立しました。</p>
                     <hr>
@@ -273,6 +273,7 @@ if (!$error_message) {
     </div>
 </body>
 </html>
+
 
 
 
