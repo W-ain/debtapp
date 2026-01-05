@@ -182,18 +182,105 @@ try {
     }
 }
 
+// // -------------------------------------------------------------------
+// // 5. JavaScriptによるアラート表示とリダイレクト
+// // -------------------------------------------------------------------
+// echo "<!DOCTYPE html><html><head><title>処理完了</title></head><body>";
+// echo "<script>";
+// echo "alert(" . json_encode($alert_message) . ");"; 
+// echo "window.location.href = " . json_encode($redirect_url) . ";"; 
+// echo "</script>";
+// echo "</body></html>";
+// exit;
+
+// ?>
+
 // -------------------------------------------------------------------
-// 5. JavaScriptによるアラート表示とリダイレクト
+// 5. 完了モーダル表示 (特定の成功メッセージのみ)
 // -------------------------------------------------------------------
-echo "<!DOCTYPE html><html><head><title>処理完了</title></head><body>";
-echo "<script>";
-echo "alert(" . json_encode($alert_message) . ");"; 
-echo "window.location.href = " . json_encode($redirect_url) . ";"; 
-echo "</script>";
-echo "</body></html>";
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>処理完了</title>
+    <link rel="icon" href="../favicon.ico?v=1">
+    <style>
+        /* save_debt.php を参考にした共通デザイン */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #eef3ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: sans-serif;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-box {
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
+        #modalMessage {
+            margin-bottom: 25px;
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.6;
+        }
+        .modal-close-btn {
+            background: #5b7cff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .modal-close-btn:hover {
+            background: #4a6ee6;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal-overlay">
+    <div class="modal-box">
+        <div id="modalMessage">
+            <?php echo nl2br(htmlspecialchars($alert_message)); ?>
+        </div>
+        <button class="modal-close-btn" onclick="location.href='<?php echo $redirect_url; ?>'">確認しました</button>
+    </div>
+</div>
+
+</body>
+</html>
+<?php
 exit;
 
-?>
 
 
 
