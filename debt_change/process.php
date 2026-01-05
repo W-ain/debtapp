@@ -170,7 +170,7 @@ try {
     $mail->Body = $body_template(false);
     $mail->send();
     
-    $alert_message .= " 両者に確認メールを送信しました。";
+    $alert_message .= "\n両者に確認メールを送信しました。";
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
@@ -193,7 +193,6 @@ try {
 // echo "</body></html>";
 // exit;
 
-// ?>
 
 // -------------------------------------------------------------------
 // 5. 完了モーダル表示 (特定の成功メッセージのみ)
@@ -205,7 +204,6 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>処理完了</title>
-    <link rel="icon" href="../favicon.ico?v=1">
     <style>
         /* save_debt.php を参考にした共通デザイン */
         body {
@@ -216,7 +214,7 @@ try {
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
         .modal-overlay {
             position: fixed;
@@ -280,6 +278,7 @@ try {
 </html>
 <?php
 exit;
+
 
 
 
